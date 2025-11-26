@@ -1,0 +1,829 @@
+---
+title: "Analyse des performances dans l’histoire des Coupes du Monde"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+## Introduction
+
+La Coupe du Monde de football, organisée tous les quatre ans depuis 1930, réunit les meilleures nations de la planète autour de l'événement sportif le plus suivi au monde.Ce tournoi, qui a marqué l’histoire du sport au fil des années par ses surprises et ses évolutions tactiques, reflète également les transformations importante du style de jeu.
+
+Dans ce projet, nous proposons une analyse historique et statistique de l’ensemble des matchs disputés en Coupe du Monde, en mobilisant les outils de la science des données. L’objectif est de mieux comprendre les dynamiques de la performance et les évolutions du football international.
+
+Notre démarche ne se limite pas à l’enchaînement de graphiques : nous cherchons à raconter comment le jeu a changé au fil du temps, quels facteurs influencent la victoire, et comment les performances collectives se transforment selon les époques. Les méthodes statistiques vues en cours nous serviront à appuyer cette réflexion rigoureuse.
+
+
+## Présentation des données
+
+Dans le cadre de cette étude, nous nous appuyons sur un ensemble de fichiers retraçant l’histoire de la Coupe du Monde depuis 1930, ainsi que des fichiers plus spécifiques à l’édition 2022. Ces bases de données nous permettent d’explorer aussi bien les dynamiques globales de performance que les caractéristiques individuelles des joueurs.
+
+# Les fichiers utilisés sont les suivants :
+
+`world_cups.csv` : tableau récapitulatif de chaque édition de la Coupe du Monde entre 1930 et 2018, incluant des informations comme l’année, le pays organisateur, les équipes sur le podium, le nombre de buts marqués, le nombre de matches disputés, etc.
+
+`world_cup_matches.csv` : liste détaillée de tous les matchs disputés dans l’histoire de la Coupe du Monde, avec pour chaque rencontre les équipes opposées, le score, le stade, la ville, la phase de tournoi, etc.
+
+`2022_world_cup_matches.csv` : version centrée sur les matchs de l’édition 2022, structurée de manière plus récente et plus complète.
+
+`2022_world_cup_groups.csv` : répartition des équipes dans les groupes de la phase initiale de 2022, accompagnée de leur classement FIFA au moment du tournoi.
+
+`2022_world_cup_squads.csv` : fichier détaillant les effectifs des sélections nationales en 2022, avec pour chaque joueur son âge, son nombre de sélections, ses buts inscrits, son club, sa ligue, etc. Ce fichier sert notamment à notre analyse en composantes principales (ACP).
+
+`data_dictionary.csv` : dictionnaire permettant de clarifier certaines variables issues des autres jeux de données.
+
+# Dimensions des fichiers:
+
+`world_cups.csv` : 21 lignes (une par édition) et 10 variables
+
+`world_cup_matches.csv` : plus de 800 lignes (matchs) et environ 20 variables
+
+`2022_world_cup_squads.csv` : plus de 800 lignes (joueurs) et 10 variables
+
+# Types de variables mobilisées
+Les bases de données combinent différents types de variables :
+
+des variables quantitatives continues : nombre de buts, âge des joueurs, sélections, score, affluence, etc.
+
+des variables qualitatives : nom des équipes, pays organisateur, phase du tournoi, poste du joueur, groupe FIFA, etc.
+
+Selon les besoins de nos analyses, certaines variables ont été transformées ou recodées (regroupement de niveaux, création de modalités ordinales, etc.).
+
+# Traitement des valeurs manquantes: 
+
+Plusieurs variables, notamment issues des éditions les plus anciennes ou de certains fichiers partiels (comme `attendance`,`win_conditions`), contiennent des valeurs manquantes. Nous avons adapté notre traitement selon le contexte : soit par filtrage, soit par exclusion temporaire de certaines colonnes, soit par simplification locale.
+
+### Variables centrales retenues
+
+Pour les analyses à venir, nous nous concentrerons principalement sur les variables suivantes :
+- **`Year`**, **`Home Team Name`**, **`Away Team Name`** : contexte du match
+- **`Home Team Goals`**, **`Away Team Goals`**, **`Attendance`**, **`Stage`**, **`Win conditions`** : pour évaluer les performances
+- **`Datetime`**, **`City`**, **`Stadium`** : pour enrichir certaines visualisations
+- **`Winner`**, **`GoalsScored`**, **`MatchesPlayed`** (depuis `world_cups.csv`) : pour les tendances par édition
+
+Ces variables seront exploitées au fil des analyses pour mieux comprendre les caractéristiques du jeu et de la performance au fil du temps.
+
+```{r}
+# Chargement des packages nécessaires
+pacman::p_load(tidyverse, moments)
+install.packages("lsr")
+library(lsr)
+library(dplyr)
+library(tidyverse)
+library(factoextra)
+library(ggplot2)
+
+# Lecture des données résumées par édition
+world_cups <- read.csv("world_cups.csv")
+world_cup_matches <- read.csv("world_cup_matches.csv")
+data_dictionary <- read.csv("data_dictionary.csv")
+world_cup_groups_2022 <- read_csv("2022_world_cup_groups.csv")
+matches <- read.csv("2022_world_cup_matches.csv", stringsAsFactors = FALSE)
+squads <- read.csv("2022_world_cup_squads.csv", stringsAsFactors = FALSE)
+```
+
+## Analyse univariée : nombre total de buts marqués par édition
+
+Nous commençons par une analyse univariée du nombre total de buts marqués lors de chaque édition de la Coupe du Monde, une variable nommée `GoalsScored` dans `world_cups.csv`. Elle constitue une première porte d’entrée pertinente pour étudier l’évolution de l’efficacité offensive dans le football international.
+
+L’analyse inclut :
+- un résumé statistique (moyenne, médiane, min, max, etc.),
+- des mesures de forme (asymétrie, aplatissement),
+- et des visualisations (histogramme, courbe de densité, boxplot).
+
+Cela nous permettra d’identifier les tendances générales et de repérer les éditions atypiques.
+
+
+```{r}
+# Étape 1 : Création d’un vecteur sans les valeurs manquantes
+goals_clean <- world_cups$Goals.Scored[!is.na(world_cups$Goals.Scored)]
+
+# Étape 2 : Calcul des indicateurs de tendance centrale et de dispersion
+summary(goals_clean)                    
+IQR(goals_clean)                     
+  
+
+# Calcul du mode du nombre de buts
+table_goals <- table(world_cups$Goals.Scored)   
+mode_goals <- as.numeric(names(table_goals)[which.max(table_goals)])
+mode_goals
+```
+
+*La moyenne* du nombre de buts marqués par édition est de *121,3*, ce qui nous donne une idée de la production offensive typique au fil du temps. La médiane, elle, est légèrement plus élevée (126 buts), ce qui signifie que la moitié des éditions ont compté plus de 126 buts, et l’autre moitié moins. Cette légère différence entre moyenne et médiane indique une asymétrie modérée dans la distribution.
+
+*Le mode* est de *70 buts*, une valeur observée à plusieurs reprises, sans doute lors des premières éditions, où le format du tournoi était plus réduit. Le fait que cette valeur soit bien en dessous de la moyenne et de la médiane suggère qu’un petit nombre d’éditions très offensives tire la moyenne vers le haut. Cela correspond à une asymétrie à droite, typique d’une distribution avec quelques valeurs élevées isolées.
+
+Les extrêmes observés sont de 70 et 171 buts, traduisant une grande variation entre les éditions. Ce large intervalle peut s'expliquer par des facteurs comme le nombre d’équipes en lice, le nombre de matchs disputés, ou encore les changements dans les styles de jeu et les règles.
+
+*L’écart interquartile* est de 57, ce qui signifie que la moitié des éditions se trouvent dans un intervalle relativement large, allant de 89 à 146 buts. Cela montre que même autour d’une tendance moyenne, le nombre de buts peut fluctuer considérablement d’un tournoi à l’autre.
+
+Ces premiers résultats permettent de poser les bases d’une analyse plus visuelle de cette variable, pour mieux comprendre la forme globale de sa distribution.
+
+Ainsi, pour prolonger cette première lecture statistique, nous allons maintenant observer un histogramme du nombre de buts marqués par édition. Ce type de représentation permet de visualiser la manière dont les valeurs se répartissent, de repérer les concentrations autour de certaines zones, et d’identifier d’éventuelles asymétries ou irrégularités dans la distribution.
+
+```{r}
+# Histogramme du nombre de buts par édition
+ggplot(world_cups, aes(x = Goals.Scored)) +
+  geom_histogram(binwidth = 10, fill = "orange", color = "black") +
+  labs(title = "Histogramme du nombre total de buts par édition",
+       x = "Nombre de buts",
+       y = "Nombre d’éditions")
+```
+Comme on peut le voir sur l’histogramme ci-dessus, le nombre total de buts marqués par édition est réparti de manière assez irrégulière. Le graphique découpe les valeurs en tranches régulières de 10 buts (par exemple : [85–95], [95–105], etc.) et indique combien d’éditions appartiennent à chaque tranche. L’axe des abscisses représente ces intervalles, tandis que l’axe des ordonnées indique le nombre d’éditions correspondantes.
+
+Certaines classes se démarquent nettement :
+
+La tranche [85 ; 95] est la plus représentée avec 4 éditions,
+
+Tandis que d’autres pics apparaissent dans les zones [130 ; 140] et [170 ; 180], montrant qu’un certain nombre d’éditions ont été particulièrement offensives.
+
+À l’inverse, d’autres classes intermédiaires, comme [115 ; 125], sont presque vides, ce qui souligne le caractère irrégulier de la distribution.
+
+La forme générale semble multimodale, avec plusieurs zones de concentration, et légèrement asymétrique : on observe davantage d’éditions très prolifiques que d’éditions particulièrement pauvres en buts. Cela suggère l’existence de profils d’éditions différents, influencés par des contextes propres (nombre d’équipes, format du tournoi, époque, etc.). Cela dit, l’histogramme ne permet pas à lui seul de replacer chaque valeur dans son contexte historique.
+
+Enfin, ce graphique confirme ce que laissait déjà entrevoir l’analyse statistique précédente : il existe une variabilité marquée dans le nombre de buts d’une édition à l’autre. Pour mieux comprendre cette évolution, il sera utile de croiser cette variable avec l’année ou avec d’autres éléments comme le nombre de matchs disputés.
+
+Dans la continuité de cette analyse, nous allons maintenant tracer une courbe de densité. Cette représentation a l’avantage de lisser la distribution, ce qui permet de mieux en percevoir la forme globale, en évitant les ruptures dues aux découpages fixes d’un histogramme. Elle est particulièrement utile pour repérer les pics, les zones de concentration ou d’éventuelles asymétries.
+
+```{r}
+ggplot(world_cups, aes(x = Goals.Scored)) +
+  geom_density(fill = "orange", color = "darkblue") +
+  labs(title = "Courbe de densité du nombre de buts par édition",
+       x = "Nombre de buts",
+       y = "Densité")
+```
+La courbe de densité ci-dessus montre de manière plus souple comment se répartit le nombre total de buts marqués par édition. Contrairement à l’histogramme, qui sépare les valeurs en blocs, cette courbe trace une estimation plus fluide, ce qui permet de mieux voir les tendances générales.
+
+Plus la courbe est haute à un endroit, plus les éditions sont nombreuses à avoir un nombre de buts proche de cette valeur.
+On remarque que la courbe a deux sommets bien distincts :
+
+-Le premier autour de *90 buts*,
+- Le second vers *145 buts*.
+
+Cela veut dire qu’il y a eu deux types d’éditions :
+
+- Certaines où peu de buts ont été marqués,
+- Et d’autres, beaucoup plus offensives, avec des scores totaux très élevés.
+
+Entre les deux, dans la zone des *115 à 125 buts*, il y a un "creux" : très peu d’éditions ont atteint ce nombres de buts. Cela peut refléter un changement dans la façon de jouer ou dans l’organisation du tournoi, avec un passage d’un football plus fermé, plus équilibré ou à un jeu plus ouvert.
+
+La courbe est aussi un peu plus étalée vers la droite, ce qui montre qu’il y a eu quelques éditions avec un nombre exceptionnellement élevé de buts (au-delà de 160). Ces cas particuliers font “pencher” la distribution vers les grandes valeurs.
+
+Dans l’ensemble, cette courbe confirme ce que montrait déjà l’analyse statistique : toutes les éditions ne se ressemblent pas, et certaines valeurs sont bien plus fréquentes que d’autres. Pour comprendre ce phénomène, il sera intéressant de comparer ces résultats à d'autres éléments, comme l’année du tournoi ou le nombre de matchs disputés.
+
+Nous allons maintenant afficher un boxplot, un graphique qui permet de résumer la répartition des données, de voir la médiane, les quartiles et de repérer facilement les éditions très différentes des autres.
+
+```{r}
+ggplot(world_cups, aes(y = Goals.Scored)) +
+  geom_boxplot(fill = "orange", color = "black") +
+  labs(title = "Boxplot du nombre de buts par édition",
+       y = "Nombre de buts")
+```
+Le *boxplot* permet ici de résumer visuellement la répartition du nombre total de buts par édition, en s’appuyant sur cinq indicateurs clés : le minimum, le maximum, la médiane, ainsi que les deux quartiles (Q1 et Q3) qui encadrent la moitié centrale des données.
+
+La *médiane*, représentée par le trait horizontal au centre de la boîte, est située autour de *126 buts*. Cela confirme ce que nous avions observé précédemment : la moitié des éditions ont enregistré moins de 126 buts, et l’autre moitié davantage.
+
+La *boîte*, qui s’étend du *premier quartile (≈ 89)* au *troisième quartile (≈ 146)*, correspond à l’*écart interquartile (IQR)*. Sa largeur importante indique une forte dispersion : le nombre de buts varie significativement d’une édition à l’autre, ce que confirmaient déjà l’histogramme et la courbe de densité.
+
+Les “*moustaches*” du boxplot prolongent la boîte jusqu’aux valeurs les plus basses et les plus hautes qui restent dans des limites statistiques normales. Ici, elles couvrent l’intervalle de 70 à 171 buts, ce qui montre l’étendue complète des données. On ne repère aucune valeur choquante : aucune édition ne dépasse les seuils habituellement considérés comme extrêmes.
+
+Enfin, la *médiane étant bien centrée dans la boîte*, on peut dire que la distribution semble assez équilibrée, sans gros déséquilibre d’un côté ou de l’autre.
+
+Ce boxplot apporte donc une synthèse claire : les éditions de la Coupe du Monde varient beaucoup en nombre de buts, mais cette variabilité reste globalement régulière. 
+
+Pour aller plus loin, nous allons maintenant calculer deux indicateurs complémentaires: l’asymétrie (skewness) et l’aplatissement (kurtosis), afin de mieux cerner la forme exacte de cette distribution.
+
+```{r}
+# Coefficient d'asymétrie (skewness)
+skewness(goals_clean)
+
+# Coefficient d’aplatissement (kurtosis)
+kurtosis(goals_clean)
+```
+Pour finir cette analyse univariée, nous avons calculé deux indicateurs qui décrivent la forme de la distribution : *l’asymétrie (skewness)* et *l’aplatissement (kurtosis)*.
+
+Le *coefficient d’asymétrie* est de *0,0118*, une valeur très proche de zéro. Cela signifie que la distribution est *quasiment symétrique* : les éditions très offensives ne déséquilibrent pas fortement l’ensemble, et les écarts entre les éditions “calmes” et “productives” sont relativement équilibrés. Ce résultat est en accord avec ce que montraient déjà la courbe de densité et le boxplot.
+
+Le *coefficient d’aplatissement*, quant à lui, est de *1,64*, une valeur inférieure au seuil de *3* que l’on trouve pour une distribution normale. Cela indique que la distribution est assez aplatie, autrement dit, les données sont réparties de manière étalée autour de la moyenne. Il n’y a pas une seule valeur centrale qui domine, mais plutôt plusieurs zones dans lesquelles les éditions ont tendance à se regrouper.
+
+Ces deux indicateurs confirment ce qui a déjà été observé visuellement et statistiquement : le *nombre de buts par édition* varie beaucoup, sans qu’il y ait de cas extrêmes ni de forte concentration autour d’une seule valeur. Cela reflète *une diversité dans le profil des éditions*, influencée par l’évolution du tournoi au fil du temps.
+
+## Évolution du nombre de buts au fil des éditions
+
+Après avoir observé comment se répartit le nombre total de buts marqués par édition, il est intéressant de voir comment cette variable a évolué au fil des années. Depuis 1930, le football a beaucoup changé : le format des tournois, le nombre d’équipes, ou encore les styles de jeu ont connu de nombreuses transformations.
+
+L’objectif ici est donc d’examiner s’il existe une tendance claire entre l’année (`Year`) et le nombre total de buts (`Goals.Scored`) : est-ce que les éditions sont devenues plus offensives avec le temps ? Ou au contraire, observe-
+
+```{r}
+ggplot(world_cups, aes(x = Year, y = Goals.Scored)) +
+  geom_point(color = "orange", size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Évolution du nombre total de buts par édition",
+       x = "Année",
+       y = "Nombre de buts")
+```
+Le graphique ci-dessus montre la relation entre l’année de chaque édition de la Coupe du Monde (`Year`) et le nombre total de buts marqués (`Goals.Scored`). Chaque point représente une édition, et la droite rouge indique la *tendance générale*.
+
+On observe clairement une *tendance à la hausse* : plus on avance dans le temps, plus le nombre de buts marqués semble augmenter. Cette évolution peut s’expliquer par plusieurs facteurs, comme l’augmentation progressive du nombre d’équipes participantes, l’ajout de nouvelles phases de compétition, ou encore l’évolution des styles de jeu vers un football plus offensif.
+
+La droite de régression, qui monte de façon régulière, met en évidence une relation positive entre l’année et le nombre de buts. Même si quelques points s’éloignent un peu de cette ligne, la tendance générale reste nette.
+
+Pour aller plus loin, il est utile de mesurer la force de cette relation à l’aide de coefficients de corrélation.
+
+Nous allons donc calculer :
+
+- *La corrélation de Pearson*, qui mesure la relation linéaire entre deux variables numériques ;
+
+- Et *la corrélation de Spearman*, qui mesure une relation croissante ou décroissante, même si elle n’est pas parfaitement linéaire. Elle est aussi moins sensible aux valeurs extrêmes.
+
+Ces deux indicateurs permettront d’évaluer objectivement la force du lien entre l’année d’une édition et le nombre de buts marqués.
+
+Avant de faire ces calculs, il faut d’abord s’assurer qu’aucune valeur manquante (`NA`) ne se trouve dans les deux colonnes concernées. Si ce n’est pas le cas, la fonction `cor()` retournera simplement `NA` comme résultat.
+On va donc créer *un sous-tableau propre*, contenant uniquement les éditions pour lesquelles les deux variables sont renseignées. Ce type de nettoyage est une étape essentielle dans toute analyse statistique.
+
+```{r}
+# Création d’un sous-tableau sans valeurs manquantes
+data_clean <- world_cups[!is.na(world_cups$Goals.Scored) & !is.na(world_cups$Year), ]
+
+# Corrélations sur les données propres
+cor(data_clean$Year, data_clean$Goals.Scored, method = "pearson")
+cor(data_clean$Year, data_clean$Goals.Scored, method = "spearman")
+```
+Les *coefficients de corrélation* confirment visuellement ce que montre le nuage de points.
+
+*La corrélation de Pearson*, qui mesure le lien linéaire entre l’année et le nombre de buts, est d'environs *0,85*. C’est une valeur élevée, proche de 1, ce qui indique une *relation positive forte* : plus les années avancent, plus le nombre de buts marqués tend à augmenter. Cela suggère qu’une tendance linéaire pourrait représenter correctement cette évolution offensive dans l’histoire des Coupes du Monde.
+
+*La corrélation de Spearman*, qui se concentre sur l’ordre des valeurs plutôt que leur forme, est encore plus élevée, à environs *0,88*. Cela signifie que le classement des éditions du moins offensif au plus offensif suit presque le même ordre que les années. En d’autres termes, les éditions les plus récentes sont globalement celles où l’on a observé le plus de buts, avec très peu d’exceptions.
+
+Ces deux coefficients, à la fois proches et élevés, renforcent l’idée que la relation entre l’année et le nombre de buts peut être modélisée de manière simple, par une régression linéaire, que nous allons explorer dans la suite.
+
+Avant cela, nous allons toutefois calculer la covariance entre `Year` et `Goals.Scored`.
+La covariance nous permettra de voir si les deux variables évoluent dans le même sens : une valeur positive indique que lorsque l’une augmente, l’autre a tendance à augmenter aussi. Elle ne mesure pas l’intensité du lien comme le fait la corrélation, mais elle donne une première idée du sens de la relation.
+
+```{r}
+cov(data_clean$Year, data_clean$Goals.Scored)
+```
+La **covariance** entre l’année d’édition (`Year`) et le nombre total de buts marqués (`Goals.Scored`) est de **768**.
+
+Comme cette valeur est *strictement positive*, cela signifie que les deux variables *évoluent dans le même sens* : plus les années avancent, plus le nombre de buts marqués a tendance à augmenter. En d’autres termes, les éditions les plus récentes sont généralement aussi les plus offensives.
+
+Contrairement au coefficient de corrélation, la covariance dépend des unités des deux variables, donc elle ne permet pas à elle seule de juger si le lien est fort ou faible. Mais sa valeur positive, combinée aux corrélations élevées calculées précédemment, confirme qu’il existe une relation croissante entre l’année et la production de buts.
+
+Pour aller plus loin, on va maintenant modéliser cette relation à l’aide d’une régression linéaire simple, en prenant `Year` comme variable explicative, et `Goals.Scored` comme variable à expliquer.
+
+Ce modèle nous donnera *une équation de tendance*, nous permettra d’estimer les paramètres de *la droite de régression*, et de voir dans quelle mesure elle s’ajuste bien aux données. On affichera également les résidus du modèle à travers les cinq graphiques demandés dans la fiche projet, pour vérifier la validité des hypothèses du modèle.
+
+
+```{r}
+modele_lm <- lm(Goals.Scored ~ Year, data = data_clean)
+
+summary(modele_lm)
+```
+On a construit *un modèle de régression linéaire* pour observer comment le nombre total de buts évolue au fil des éditions de la Coupe du Monde. L’idée, c’était de voir si ce chiffre monte, baisse ou reste stable au cours du temps.
+
+Résultat : *la tendance est clairement à la hausse*. D’après l’équation du modèle, *le nombre de buts marqués augmente en moyenne d’un peu plus d’un but par édition*. Cela reflète une évolution du tournoi vers un jeu plus offensif.
+
+Le modèle explique *environ 72 %* de la variation entre les éditions, ce qui montre que l’année joue un rôle important dans cette évolution. On retrouve donc la même idée que dans notre analyse graphique et nos calculs précédents.
+
+Certaines éditions s’éloignent un peu de la droite de tendance, avec plus ou moins de buts que prévu. Ces écarts sont appelés *résidus*, et c’est en les étudiant qu’on peut voir si le modèle suit bien les données, ou s’il y a des choses particulières à prendre en compte.
+
+Même si la tendance globale est claire, on va quand même vérifier les hypothèses classiques de la régression, en regardant les résidus sous plusieurs angles. Pour ça, on s’appuie sur cinq graphiques :
+
+1. Un diagramme de dispersion avec la droite de régression : pour visualiser l’ajustement général
+2. Un graphes des résidus en fonction de la variable explicative : pour tester si la relation est bien linéaire.
+3. Un graphes des résidus en fonction des valeurs prédites : ppour voir s’ils sont répartis régulièrement.
+4. Un histogramme des résidus : pour voir leur forme.
+5. Un QQ-plot . pour vérifier que les résidus suivent bien une loi normale.
+
+Ces graphiques nous permettent de vérifier que le modèle fonctionne, et de repérer s’il y a des anomalies ou des choses à nuancer dans les résultats
+
+```{r}
+ggplot(data_clean, aes(x = Year, y = Goals.Scored)) +
+  geom_point(color = "darkorange", size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Nuage de points avec droite de régression",
+       x = "Année",
+       y = "Nombre de buts")
+```
+Ce graphique montre la relation entre l’année d’une édition et le nombre total de buts marqués, avec en rouge *la droite de régression* qui résume la tendance générale.
+
+On voit que les points suivent *une tendance globale à la hausse* : plus les éditions sont récentes, plus on observe de buts. Cela confirme ce que le modèle prévoyait.
+
+La droite rouge correspond aux valeurs estimées par le modèle. Une bonne partie des éditions s’en rapproche, ce qui montre que l’ajustement est globalement correct. Mais on remarque aussi quelques points qui s’en écartent, avec des éditions où le nombre de buts est bien plus élevé ou plus faible que prévu. Ces écarts, ce sont *les résidus*, et c’est justement eux que nous allons étudier dans le graphique suivant..
+
+**Graphique 2 – Résidus en fonction de l’année**
+
+```{r}
+ggplot(data_clean, aes(x = Year, y = resid(modele_lm))) +
+  geom_point(color = "orange", size = 3) +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Résidus en fonction de l’année",
+       x = "Année",
+       y = "Résidus")
+```
+Ce graphique permet de visualiser *les résidus*, c’est-à-dire la différence entre les valeurs réellement observées et celles prévues par le modèle, en fonction de l’année (`Year`).
+
+Ce type de représentation sert à vérifier si la relation entre les variables est bien linéaire. Si le modèle est adapté, les points doivent être répartis de manière aléatoire autour de la ligne zéro, sans former de motif particulier. En revanche, si une forme apparaît (comme un U ou un S), cela peut indiquer que la relation n’est pas totalement linéaire.
+
+Ici, la plupart des points sont assez bien dispersés autour de zéro. On ne remarque aucune tendance marquée, ni structure particulière, ce qui confirme que l’hypothèse de linéarité est globalement respectée.
+
+Quelques résidus restent très éloignés de la ligne, notamment pour certaines éditions, mais ils semblent isolés et ne remettent pas en cause la qualité générale du modèle. Ils montrent simplement que certaines Coupes du Monde ont eu un nombre de buts assez atypique par rapport à la tendance globale.
+
+**Graphique 3 – Résidus en fonction des valeurs prédites**
+
+```{r}
+ggplot(data_clean, aes(x = fitted(modele_lm), y = resid(modele_lm))) +
+  geom_point(color = "orange", size = 3) +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Résidus en fonction des valeurs prédites",
+       x = "Valeurs prédites",
+       y = "Résidus")
+```
+Ce graphique sert à vérifier si *l’écart entre les valeurs réelles et les valeurs prédites* reste globalement stable.
+
+On voit que les points sont assez bien répartis autour de la ligne rouge, sans forme particulière ou déséquilibre flagrant. Il y a quelques résidus qui sortent un peu du lot, notamment vers les prédictions autour de 100 buts, avec un écart qui dépasse les 40. À d’autres endroits, les écarts restent plus contenus.
+
+Dans l’ensemble, la variation des écarts semble assez régulière, ce qui laisse penser que le modèle reste cohérent, même si quelques éditions se démarquent un peu plus que les autres.
+
+**Graphique 4 – Histogramme des résidus**
+```{r}
+ggplot(data_clean, aes(x = resid(modele_lm))) +
+  geom_histogram(binwidth = 5, fill = "darkorange", color = "black") +
+  labs(title = "Histogramme des résidus",
+       x = "Résidus",
+       y = "Fréquence")
+```
+Cet histogramme donne un aperçu de la répartition des écarts entre les valeurs observées et celles prévues par le modèle.
+
+On voit que *la majorité des résidus sont plutôt regroupés autour de 0*, ce qui est bon signe : cela veut dire que pour beaucoup d’éditions, la prédiction colle assez bien à la réalité. On remarque quand même que *certains écarts sont plus marqués*, notamment dans les résidus très négatifs (autour de -20), qui sont plus fréquents que ceux très positifs. Cela crée un petit déséquilibre vers la gauche.
+
+Même si la forme n’est pas parfaitement symétrique, il n’y a pas non plus d’écarts extrêmes qui remettraient en question tout le modèle. Ce graphique confirme que la plupart des prédictions sont raisonnables, avec quelques éditions un peu à part.
+
+
+**Graphique 5 – QQ-plot des résidus**
+
+```{r}
+qqnorm(resid(modele_lm), main = "QQ-plot des résidus", col = "orange")
+qqline(resid(modele_lm), col = "red", lwd = 2)
+```
+Le QQ-plot est un outil graphique qui permet de vérifier si les résidus de notre modèle suivent une distribution normale. Sur ce graphique, *chaque point représente un résidu*, et on les compare à ce qu’ils devraient être s’ils étaient parfaitement distribués selon une loi normale. Si tout était parfaitement aligné, on verrait tous les points suivre *la droite rouge*.
+
+Ici, on remarque que *la majorité des points colle bien à la droite*, surtout dans la partie centrale. Il y a tout de même quelques écarts visibles aux extrémités, notamment pour les résidus très élevés ou très bas : cela montre que certaines éditions de la Coupe du Monde se démarquent par un écart assez important entre le nombre réel de buts et celui prévu par le modèle.
+
+Mais globalement, la forme du nuage de points reste cohérente avec une distribution normale, même si elle n’est pas parfaite. Ces petites différences sur les bords ne remettent pas en cause la validité du modèle, elles traduisent simplement la présence de quelques éditions atypiques, comme on l’avait déjà vu dans les graphiques précédents.
+
+Ce QQ-plot complète donc bien notre analyse des résidus : il confirme que le modèle est plutôt bien ajusté, sans gros écart aux règles classiques de la régression. C’est un résultat encourageant pour la suite de l’analyse.
+
+##Analyse de la variable Stage (phase du match)
+
+Dans cette partie, on s’intéresse à une variable qualitative centrale dans l’organisation d’un tournoi : la phase de la compétition, enregistrée dans la variable `Stage`. Elle permet de savoir à quel moment du tournoi un match a eu lieu : phase de groupes, huitièmes, quarts de finale, demi-finales, ou encore la finale.
+
+On commence par une analyse univariée de cette variable, en examinant la fréquence des différentes étapes du tournoi. L’objectif est de repérer quelles phases sont les plus fréquentes et donc de mieux comprendre la structure générale des éditions de Coupe du Monde à travers les années.
+
+**Tableau de fréquences – Variable 'Stage'**
+
+Pour commencer notre analyse,on dresse un tableau de fréquences qui recense le nombre de matchs pour chaque phase. Cela nous donnera une première idée de la répartition des matchs selon les étapes du tournoi, et nous aidera à visualiser ensuite cette répartition avec un graphique clair.
+
+```{r}
+table(world_cup_matches$Stage)
+```
+
+Le tableau ci-dessus montre comment les matchs sont répartis selon les différentes phases de la Coupe du Monde. On y retrouve les grandes étapes classiques du tournoi : les phases de groupes, les tours à élimination directe (huitièmes, quarts, demi-finales), la petite finale (match pour la 3e place), ainsi que la finale.
+
+Ce qui saute aux yeux, c’est que la *"Group stage"* concentre à elle seule 528 matchs, ce qui est logique puisqu’elle regroupe plusieurs rencontres par édition. On note aussi une bonne représentation des *"Round of 16"* (89 matchs) et des *"Quarter-finals"* (66 matchs), qui marquent le début des phases éliminatoires.
+
+Les autres étapes sont naturellement moins fournies : *"Semi-finals"* (36 matchs), *"Third place"* (19 matchs) ou encore la "Final" (20 matchs), jouée une seule fois par édition. À noter aussi la présence de formats plus anciens comme *"Final round"* ou *"Second group stage"*, témoins de certaines éditions passées à la structure particulière et d'un changement de strucure de la Coupe du Monde au fil des années.
+
+Globalement, cette répartition reflète bien le fonctionnement classique d’un tournoi international : plus on avance, moins il y a de matchs, avec une base large et un sommet étroit. Ce schéma en entonnoir donne une première idée claire de la logique d'organisation des Coupes du Monde à travers le temps.
+**Diagramme en barres – Variable `Stage`**
+
+Pour mieux illustrer la répartition des matchs selon les différentes phases de la Coupe du Monde, on propose ici *une représentation graphique en barres*. Ce format permettra de visualiser plus clairement les différences de fréquence entre chaque étape du tournoi, et de mieux comprendre la structure globale de la compétition.
+
+On pourra ainsi voir rapidement quelles phases concentrent le plus de matchs, et lesquelles sont plus ponctuelles. Cela complètera efficacement le tableau précédent en donnant une lecture plus intuitive des informations
+
+```{r}
+ggplot(world_cup_matches, aes(x = Stage)) +
+  geom_bar(fill = "orange") +
+  labs(title = "Nombre de matchs par phase de la compétition",
+       x = "Phase (Stage)",
+       y = "Nombre de matchs") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+Le graphique en barres met clairement en évidence *la domination de la phase de groupes* dans le nombre total de matchs disputés. La "Group stage" compte à elle seule plus de *500 rencontres*, ce qui s’explique facilement par la structure du tournoi : chaque édition comprend plusieurs groupes et donc un grand volume de matchs dès le début de la compétition.
+
+On observe ensuite une nette chute dans les fréquences pour les *"Round of 16"*, *"Quarter-finals"* et *"Semi-finals"*, ce qui est logique puisqu’à chaque étape, le nombre d’équipes en lice diminue.
+
+Les phases les plus rares, comme la finale ou le match pour *la 3e place*, n’ont lieu *qu’une seule fois par édition*, ce qui explique leurs effectifs bien plus faibles. Ce graphique confirme la logique pyramidale du tournoi : beaucoup de matchs en début de compétition, de moins en moins à mesure qu’on approche du sommet.
+
+Dans la suite, on s’intéresse aux équipes nationales les plus présentes dans l’histoire de la Coupe du Monde, à travers l’analyse de la variable `Home.Team`. Celle-ci indique quelle équipe était désignée comme “équipe à domicile” dans chaque rencontre. Même si cette attribution peut être arbitraire, elle reste utile pour repérer les nations les plus souvent engagées dans le tournoi. On complétera ensuite cette vue avec les données liées aux équipes "à l’extérieur", via la variable `Away.Team`.
+
+```{r}
+# Fréquences des équipes à domicile
+table(world_cup_matches$Home.Team)
+```
+Le tableau de fréquences ci-dessus donne un aperçu des équipes nationales ayant été enregistrées comme “équipe à domicile” au moins une fois dans l’histoire des Coupes du Monde.
+
+Sans surprise, on retrouve en tête des sélections majeures comme *le Brésil* et *l’Allemagne* (79 matchs chacun), suivies par des poids lourds comme *l’Argentine* (55) ou *l’Italie* (53). Ce sont des nations habituées à aller loin dans le tournoi, souvent qualifiées et régulièrement présentes depuis des décennies.
+
+À l’inverse, certaines équipes n’apparaissent qu’une ou deux fois dans cette colonne, preuve qu’elles n’ont participé qu’à une seule édition ou qu’elles n’ont pas franchi les premiers tours. Ces cas reflètent des parcours plus ponctuels ou plus discrets dans l’histoire de la compétition.
+
+Ce tableau donne déjà une bonne idée de la *hiérarchie historique* des nations en Coupe du Monde. Pour aller plus loin et avoir une vision complète, on va maintenant additionner *les matchs joués à domicile* (variable `Home.Team`) et *les matchs joués à l’extérieur* (`Away.Team`) afin de calculer, pour chaque pays, le nombre total de matchs disputés dans l’histoire du tournoi.
+
+```{r}
+# Fréquences des équipes "home"
+# Créer les tableaux de fréquence
+home_freq <- table(world_cup_matches$Home.Team)
+away_freq <- table(world_cup_matches$Away.Team)
+
+# Transformer en vecteurs nommés
+home_freq <- as.data.frame(home_freq)
+colnames(home_freq) <- c("Team", "Home")
+
+away_freq <- as.data.frame(away_freq)
+colnames(away_freq) <- c("Team", "Away")
+
+# Fusionner les deux tableaux de fréquences sur le nom de l’équipe
+total_freq <- merge(home_freq, away_freq, by = "Team", all = TRUE)
+
+# Remplacer les NA par 0 (équipes absentes d’un des deux tableaux)
+total_freq[is.na(total_freq)] <- 0
+
+# Ajouter une colonne "Total"
+total_freq$Total <- total_freq$Home + total_freq$Away
+
+# Trier par ordre décroissant
+total_freq_sorted <- total_freq[order(-total_freq$Total), ]
+
+# Afficher les 10 équipes ayant disputé le plus de matchs
+head(total_freq_sorted, 10)
+```
+En combinant les matchs joués à domicile et à l’extérieur, on peut établir un classement des nations les plus présentes en Coupe du Monde, en termes de nombre total de matchs disputés.
+
+Sans surprise, ce sont *le Brésil* et *l’Allemagne* qui arrivent en tête, avec 109 matchs chacun. Leur régularité, leur longévité et leurs nombreux parcours jusqu’au bout du tournoi expliquent ce chiffre impressionnant. Juste derrière, on retrouve *l’Italie* (83 matchs) et *l’Argentine* (81 matchs), deux autres géants historiques du football mondial.
+
+D’autres grandes nations suivent, comme *l’Angleterre*, *la France*, *l’Espagne*, *le Mexique*, *l’Uruguay* ou encore *la Suède*, toutes ayant dépassé la barre des 50 matchs.
+
+Ce classement illustre bien la constance de certaines sélections dans les phases finales du tournoi. On comprend aussi que la performance globale est souvent liée à la fréquence de participation, un lien qu’on pourra approfondir par la suite.
+
+Pour mieux visualiser ces résultats, nous allons maintenant représenter les 10 équipes les plus présentes dans un diagramme en barres. Cela permettra de comparer plus facilement leurs parcours respectifs à travers l’histoire du tournoi.
+
+```{r}
+# On extrait les 10 premières lignes
+top10 <- head(total_freq_sorted, 10)
+
+# Diagramme en barres trié par nombre de matchs
+ggplot(top10, aes(x = reorder(Team, -Total), y = Total)) +
+  geom_bar(stat = "identity", fill = "darkorange") +
+  labs(title = "Top 10 des équipes les plus présentes en Coupe du Monde",
+       x = "Équipe nationale",
+       y = "Nombre total de matchs") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+Ce graphique vient renforcer ce que montrait déjà le tableau : on identifie facilement *les nations les plus présentes* dans l’histoire de la Coupe du Monde. En un coup d’œil, on repère les grandes équipes qui ont marqué la compétition par leur régularité.
+
+On va maintenant s’intéresser à *une relation entre deux variables qualitatives* tirées des données de matchs : *la phase de la compétition (`Stage`)* et *le continent d’origine des équipes (`Continent`)*.
+
+L’idée est de voir si *certaines régions du monde* sont plus présentes à certaines étapes du tournoi. Pour cela, on va croiser les deux variables dans un *tableau de contingence*, puis représenter les résultats avec *un mosaic plot* pour mieux visualiser la répartition.
+
+```{r}
+# Regrouper Host Country et Winner par continent 
+continent_mapping <- c(
+  "Argentina" = "Amérique du Sud", "Brazil" = "Amérique du Sud", "Uruguay" = "Amérique du Sud",
+  "Germany" = "Europe", "France" = "Europe", "England" = "Europe", "Spain" = "Europe", "Italy" = "Europe",
+  "Sweden" = "Europe", "Switzerland" = "Europe", "Russia" = "Europe", "Serbia" = "Europe", "Croatia" = "Europe",
+  "USA" = "Amérique du Nord", "Mexico" = "Amérique du Nord", "Chile" = "Amérique du Sud", "South Africa" = "Afrique",
+  "South Korea" = "Asie", "Japan" = "Asie", "Qatar" = "Asie"
+)
+
+# Ajouter une colonnes continents
+world_cups$Host.Continent <- continent_mapping[world_cups$Host.Country]
+world_cups$Winner.Continent <- continent_mapping[world_cups$Winner]
+
+# Table croisée par continent
+table_continent <- table(world_cups$Host.Continent, world_cups$Winner.Continent)
+
+mosaicplot(table_continent,
+           main = "Continent organisateur vs continent vainqueur",
+           xlab = "Continent organisateur",
+           ylab = "Continent vainqueur",
+           las = 1,
+           col = c("lightgoldenrod", "orange", "darkorange"))
+
+
+
+# Test du khi² d'indépendance pour Pays Organisateur vs Vainqueur
+chisq_test_organisateur_vainqueur <- chisq.test(table_continent)
+
+
+# Résultat du test
+chisq_test_organisateur_vainqueur
+
+```
+*Le mosaic plot* illustre la répartition des victoires selon le continent organisateur. On voit tout de suite que l’Europe domine largement en termes de Coupes du Monde remportées, y compris lorsqu’elle organise le tournoi. Ce n’est pas très étonnant vu la forte représentation des équipes européennes dans l’histoire de la compétition.
+
+L’Amérique du Sud affiche aussi plusieurs victoires, notamment lorsque les tournois sont organisés sur son propre continent, mais également sur d’autres continents. En revanche, pour les continents comme *l’Afrique*, *l’Asie* ou *l’Amérique du Nord*, on constate que très peu de victoires sont associées à des compétitions organisées localement — voire aucune. Cela traduit des disparités de performances liées à la répartition géographique du football de haut niveau.
+
+Pour vérifier s’il existe une dépendance statistique entre les deux variables (continent organisateur et continent vainqueur), on a réalisé *un test du khi²*. Le résultat donne une statistique de test de *152,72* avec *144 degrés de liberté*, et surtout *un p-value de 0,2937*.
+
+Autrement dit, *ce p-value est largement supérieur à 0,05*, donc on ne rejette pas l’hypothèse d’indépendance. Cela signifie que statistiquement, *il n’y a pas de lien fort entre le continent qui organise et celui qui gagne la Coupe du Monde*. En résumé : le lieu d’organisation ne semble pas favoriser significativement une région du monde en particulier pour la victoire finale, même si quelques tendances visuelles peuvent être observées.
+
+##Analyse croisée : poste des joueurs et âge
+
+On poursuit notre projet en croisant cette fois une variable qualitative avec une variable quantitative, comme prévu dans notre plan.
+
+Pour cela, on utilise le fichier `2022_world_cup_squads.csv`, qui rassemble les données des joueurs sélectionnés pour la Coupe du Monde 2022. Ici, on va s'intéresser à la variable `Position` (*le poste occupé sur le terrain*) et à *l'âge des joueurs* (`Age`).
+
+L’idée, c’est de voir si l’âge des joueurs varie selon leur poste (gardien, défenseur, milieu ou attaquant). On va commencer par illustrer cette relation avec *un boxplot croisé*, qui permet de bien comparer les distributions d’âge entre les différents postes. Ensuite, on mesurera l’intensité de cette relation avec *le rapport de corrélation η²*, un indicateur qui permet de voir à quel point le poste influence l’âge des joueurs.
+
+```{r}
+ggplot(squads, aes(x = Position, y = Age)) +
+  geom_boxplot(fill = "darkorange") +
+  labs(title = "Répartition de l'âge selon le poste des joueurs",
+       x = "Poste",
+       y = "Âge") +
+  theme_minimal()
+```
+Ce boxplot permet de visualiser comment l’âge des joueurs varie selon leur poste sur le terrain.
+
+On voit très clairement que *les gardiens de but* sont, en moyenne, plus âgés que les autres joueurs. Leur médiane tourne autour de 30 ans, et plusieurs dépassent les 35, voire les 40 ans. Cela reflète sans doute le fait qu’un gardien peut rester performant plus longtemps, car ce poste repose moins sur l’explosivité physique que sur l’expérience et le placement.
+
+*Les milieux de terrain*, à l’inverse, semblent plus jeunes. La médiane est plus basse, autour de 26 ans, et on observe une plus grande dispersion des âges, avec la présence de plusieurs très jeunes joueurs. Ce poste demande un gros volume de jeu, ce qui peut expliquer un rajeunissement plus marqué.
+
+*Les défenseurs* et *attaquants* se situent entre les deux : leurs médianes sont proches (27 à 28 ans), et la répartition des âges est plus resserrée.
+
+Ce graphique donne donc l’impression qu’il y a effectivement des différences d’âge selon les postes. Mais pour aller plus loin et savoir si ces écarts sont réellement significatifs, on va s’appuyer sur un indicateur statistique : le coefficient η², qui permet de mesurer l’influence d’une variable qualitative (ici, le poste) sur une variable quantitative (l’âge).
+
+```{r}
+etaSquared(aov(Age ~ Position, data = squads))
+```
+Le calcul du rapport de corrélation η² donne une valeur d’environ *0,058*, soit *5,8 %*. Cela signifie que le poste occupé par un joueur explique une petite partie de la variation de son âge.
+
+Autrement dit, le poste a bien une influence sur l’âge, mais cette influence reste limitée. Ce qu’on voyait déjà avec le boxplot se confirme ici : il y a bien des écarts entre les postes — les gardiens étant souvent un peu plus âgés, les milieux parfois plus jeunes — mais dans l’ensemble, ces différences ne sont pas très marquées.
+
+On peut donc dire que le poste joue un rôle, mais qu’il n’est pas déterminant à lui seul pour expliquer l’âge des joueurs.
+
+##Analyse en composantes principales (ACP) sur les caractéristiques des équipes en 2022
+
+Dans cette partie du projet, nous cherchons à comprendre les différences statistiques entre les équipes nationales ayant participé à la Coupe du Monde 2022, à partir de plusieurs indicateurs moyens : âge des joueurs, expérience (nombre moyen de sélections), efficacité offensive (buts moyens marqués, buts en Coupe du Monde), ainsi que le nombre de joueurs sélectionnés et le nombre de matchs disputés.
+
+Pour cela, nous combinons les informations issues de deux jeux de données complémentaires :
+
+le fichier des matchs (`2022_world_cup_matches.csv`), qui permet de calculer combien de fois chaque nation a joué,
+
+et celui des effectifs (`2022_world_cup_squads.csv`), qui nous donne accès à des statistiques moyennes sur les joueurs sélectionnés.
+
+L’objectif est de synthétiser ces variables grâce à une analyse en composantes principales (ACP). Cette méthode permet de réduire la dimension des données tout en mettant en évidence les grands axes de différenciation entre équipes. Cela nous aidera à repérer des profils-types (par exemple, des équipes jeunes mais peu expérimentées, ou d'autres très expérimentées mais moins prolifiques).
+
+Une fois l’ACP réalisée, nous visualiserons :
+
+les axes principaux et leur importance,
+
+la projection des équipes dans l’espace factoriel (pour voir quelles équipes se ressemblent),
+
+le rôle des différentes variables dans la structuration de ces axes,
+
+et enfin, une classification des équipes par regroupement (grâce à la méthode HCPC), pour identifier des groupes d’équipes statistiquement proches
+
+```{r}
+library(FactoMineR)
+
+match_counts <- matches %>%
+  pivot_longer(cols = c("Home.Team", "Away.Team"),
+               names_to = "home_away",
+               values_to = "Team") %>%
+  group_by(Team) %>%
+  summarise(nb_matches = n(), .groups = "drop")
+
+squad_stats <- squads %>%
+  group_by(Team) %>%
+  summarise(
+    avg_age = mean(Age, na.rm = TRUE),
+    avg_caps = mean(Caps, na.rm = TRUE),
+    avg_goals = mean(Goals, na.rm = TRUE),
+    avg_wc_goals = mean(WC.Goals, na.rm = TRUE),
+    nb_players = n(),
+    .groups = "drop"
+  )
+
+acp_data <- inner_join(match_counts, squad_stats, by = "Team")
+
+acp_data_clean <- na.omit(acp_data)
+
+acp_vars <- acp_data_clean %>%
+  select(nb_matches, avg_age, avg_caps, avg_goals, avg_wc_goals, nb_players) %>%
+  as.data.frame()  
+
+rownames(acp_vars) <- acp_data_clean$Team  
+
+res_pca <- PCA(acp_vars, scale.unit = TRUE, graph = FALSE)
+
+fviz_eig(res_pca, addlabels = TRUE, ylim = c(0, 60),
+         main = "Pourcentage de variance expliquée")
+```
+Le graphique ci-dessus illustre combien chaque axe principal (ou composante) extrait par l’ACP contribue à expliquer la variabilité totale des données.
+
+Le *premier axe* ressort clairement comme le plus important : à lui seul, il explique *53 %* de l’information totale, ce qui est une très bonne proportion. Cela signifie qu’un seul axe suffit déjà à résumer plus de la moitié des différences entre les équipes en termes de profils moyens (âge, buts, nombre de matchs, etc.).
+
+Le *deuxième axe* complète avec *25 % *supplémentaires, ce qui fait qu’en cumulant les deux premiers axes, on arrive à *78 % de la variance* expliquée. C’est largement suffisant pour se contenter d’une représentation en deux dimensions, ce qui va simplifier l’interprétation visuelle.
+
+Les autres axes (3 à 6) apportent beaucoup moins d’information, avec des contributions qui chutent très vite (moins de 12 %, puis sous les 8 %, etc.). Cela montre qu’après les deux premiers axes, le reste correspond surtout à du bruit ou à des nuances plus fines.
+
+En résumé, l’analyse montre que deux dimensions suffisent pour visualiser de manière fiable les grandes différences entre les équipes de la Coupe du Monde 2022, ce qui facilitera les prochaines visualisations (cercle des corrélations, projection des équipes, etc.).
+
+Après avoir examiné la manière dont chaque variable contribue à la construction des axes, on cherche maintenant à visualiser la position des différentes équipes dans l’espace formé par les deux premières dimensions de l’ACP. Ce graphique permet d’observer des regroupements ou des oppositions entre équipes, selon leurs caractéristiques statistiques communes.
+```{r}
+fviz_pca_ind(res_pca, label = "none", repel = TRUE,
+             title = "Projection des équipes (individus)")
+```
+Sur le graphique, chaque point correspond à une équipe nationale, positionnée selon ses valeurs moyennes (âge, expérience, nombre de buts, etc.).
+L’axe horizontal (Dim1), qui capte *53 % de l’information*, semble séparer des profils d’équipes très différents : certaines sont clairement situées à droite de l’axe (ce qui pourrait correspondre à des équipes avec beaucoup de matchs et de joueurs expérimentés), tandis que d’autres sont regroupées à gauche, probablement avec des profils plus jeunes ou moins rodés.
+
+L’axe vertical (Dim2), qui capte *25 % de la variance*, apporte un second niveau de distinction, moins marqué, mais qui peut refléter des nuances comme le nombre de buts ou la répartition des rôles dans l’effectif.
+
+Certains points sont isolés, ce qui laisse penser que ces équipes ont un profil vraiment à part dans le tournoi 2022. On ne peut pas encore dire lesquelles sans les noms, mais la suite de l’analyse (ou l’ajout des labels) permettra de creuser ça
+
+Après avoir regardé où se placent les équipes dans l’espace des deux premières dimensions, on va maintenant s’intéresser aux variables elles-mêmes, pour comprendre ce qui structure ces axes.
+
+*Le cercle des corrélations* nous permet de voir quelles variables sont les plus liées à chaque axe, et comment elles se regroupent entre elles. Plus une flèche est longue, plus la variable contribue à l’axe, et plus sa direction nous renseigne sur son effet.
+
+```{r}
+  fviz_pca_var(res_pca, col.var = "contrib",
+               gradient.cols = c("lightblue", "blue", "darkblue"),
+               repel = TRUE, title = "Cercle des corrélations")
+```
+Sur ce cercle, on voit très clairement que l’axe 1 (Dim1) est tiré en grande partie par des variables comme *l’âge moyen *(`avg_age`), *le nombre moyen de sélections* (`avg_caps`), ainsi que *le nombre moyen de buts *(`avg_goals`) et *de buts en Coupe du Monde* (avg_wc_goals).
+Toutes ces flèches vont dans la même direction et sont bien étirées, ce qui montre qu’elles expliquent une bonne partie de ce premier axe. Pour résumer, plus une équipe est expérimentée et efficace, plus elle est située à droite sur l’axe 1.
+
+L’axe 2 (Dim2), lui, semble davantage influencé par le nombre de joueurs (`nb_players`) et un peu par `avg_wc_goals`. L’information est moins concentrée ici, mais on peut y voir un autre type de distinction : peut-être des effectifs plus larges ou mieux répartis.
+
+Enfin, `nb_matches` est très peu corrélé aux deux axes : sa flèche est courte et proche du centre, ce qui veut dire qu’elle n’apporte pas grand-chose à la séparation observée dans cet espace.
+
+En résumé, ce graphique nous aide à comprendre comment les équipes sont positionnées selon leur profil, et sur quelles variables reposent principalement les différences observées.
+
+Après avoir observé quelles variables influencent le plus chaque axe, on peut maintenant s’intéresser à la qualité de leur représentation dans le plan factoriel.
+Le cos² permet justement de mesurer à quel point chaque variable est bien représentée dans ce plan.
+Plus la valeur est proche de 1, mieux la variable est projetée, et plus on peut lui faire confiance dans l’interprétation graphique.
+```{r}
+fviz_pca_var(res_pca, col.var = "cos2",
+             gradient.cols = c("orange", "red", "darkgreen"),
+             repel = TRUE, title = "Qualité de représentation (cos²)")
+```
+Sur ce graphique, on peut voir que certaines variables sont très bien représentées dans le plan formé par les deux premiers axes.
+C’est le cas par exemple de `avg_caps`, `avg_goals`, ou encore avg_age, qui ont des flèches bien tendues et colorées en vert foncé. Ça signifie que ces variables sont projetées avec une bonne précision dans ce plan, et qu’on peut donc les interpréter sans trop de réserves.
+
+En revanche, d'autres variables comme nb_matches apparaissent très pâles et proches du centre. Cela veut dire qu'elles sont mal représentées sur ce plan, et que leur influence est sans doute plus visible sur un axe suivant, ou diluée dans l’ensemble.
+
+Ce graphique nous permet donc de faire le tri entre les variables les plus lisibles dans l’analyse, et celles dont l'interprétation serait moins fiable ici. C’est une bonne étape pour savoir sur quoi s’appuyer quand on commente les résultats.
+
+Après avoir examiné le cercle des corrélations, il est important d’identifier plus précisément quelles variables ont réellement contribué à la construction de chaque axe principal de l’analyse en composantes principales.
+Pour cela, on utilise un diagramme de contribution qui permet de savoir quelles variables ont le plus influencé l’Axe 1 et l’Axe 2. Plus une variable a une contribution élevée, plus elle a joué un rôle important dans la formation de l’axe en question.
+```{r}
+fviz_contrib(res_pca, choice = "var", axes = 1, top = 10,
+             title = "Contributions des variables - Axe 1")
+fviz_contrib(res_pca, choice = "var", axes = 2, top = 10,
+             title = "Contributions des variables - Axe 2")
+```
+Le premier graphique montre que l*’Axe 1* est très fortement influencé par trois variables :
+
+- Le nombre moyen de buts marqués par joueur (`avg_goals`),
+
+- Le nombre moyen de sélections (`avg_cap`s),
+
+- Et l’âge moyen (`avg_age`).
+
+Ces trois indicateurs représentent à eux seuls plus de 80 % de l’axe, ce qui veut dire que l’Axe 1 est surtout structuré autour de la performance individuelle des joueurs.
+
+En revanche, le deuxième graphique montre que l’*Axe 2* repose davantage sur d’autres critères.
+La variable qui domine très clairement ici est le nombre total de joueurs sélectionnés (`nb_players`), suivie du nombre moyen de buts marqués en Coupe du Monde (`avg_wc_goals`).
+Cela suggère que cet axe pourrait être interprété comme une opposition entre les équipes qui mobilisent beaucoup de joueurs et celles avec un effectif plus restreint ou plus stable.
+
+Ces deux représentations permettent donc de mieux comprendre ce que mesurent les deux axes de l’ACP et sur quelles variables principales ils reposent. C’est une étape essentielle avant d’interpréter la position des équipes sur le plan factoriel.
+
+Maintenant qu’on a identifié quelles variables jouaient le rôle principal dans la construction des axes, on va s’intéresser à quelles équipes ont eu le plus de poids dans la formation du premier axe de l’ACP.
+Pour ça, on affiche les *10 équipes qui contribuent le plus à l’Axe 1*, à l’aide d’un graphique en barres. Ce type de représentation permet de repérer facilement les nations qui influencent le plus la direction principale de la projection.
+```{r}
+fviz_contrib(res_pca, choice = "ind", axes = 1, top = 10,
+             title = "Contributions des équipes - Axe 1")
+```
+Le graphique met en lumière les équipes qui ont eu le plus d'impact sur l’*axe principal de l’analyse*, c’est-à-dire l’axe qui explique à lui seul *53 % de l'information*.
+
+On voit que certaines équipes (comme celle en position 3 ou 14) se démarquent très clairement avec des contributions nettement supérieures aux autres. Cela signifie qu’elles ont des profils particuliers ou très marqués sur les variables étudiées (âge moyen, nombre de buts, sélections, etc.).
+
+Ces équipes influencent donc fortement *la lecture générale de l’axe 1*. À l’inverse, d’autres sont beaucoup moins contributrices : elles sont plus proches du profil moyen ou ont des valeurs moins extrêmes.
+Ce type d'analyse permet de comprendre quelles nations structurent le nuage des données et orientent les résultats de l’ACP.
+
+Après avoir visualisé les axes principaux de l’ACP et identifié les variables et équipes les plus influentes, on passe à une *classification automatique* des équipes en groupes, selon leur ressemblance.
+Pour cela, on applique une *classification hiérarchique* sur les résultats de l’ACP (méthode HCPC). Elle permet de rassembler les équipes qui ont des profils proches (âge, nombre de buts, expérience...) en les regroupant dans des clusters.
+La première visualisation est un *dendrogramme*, qui montre comment les équipes se sont regroupées étape par étape.
+```{r}
+res_hcpc <- HCPC(res_pca, graph = FALSE)
+fviz_dend(res_hcpc, cex = 0.7, palette = "jco", main = "Dendrogramme des équipes")
+```
+Sur le dendrogramme, chaque équipe est représentée par un numéro (correspondant à son rang dans la base de données), et les branches illustrent leur regroupement progressif. Plus deux équipes sont connectées bas dans l’arbre, plus leurs profils sont proches.
+
+On voit par exemple que plusieurs équipes se regroupent très tôt (en bas à gauche), ce qui signifie qu’elles se ressemblent beaucoup statistiquement parlant. À l’inverse, certaines branches ne se rejoignent qu’en haut de l’arbre : ces équipes sont plus atypiques ou éloignées du reste.
+
+Les différentes couleurs permettent de repérer visuellement les grands groupes formés à l’issue de la classification : chaque couleur correspond à un cluster distinct.
+C’est un bon moyen d’identifier les différents types de profils d’équipes présents dans la Coupe du Monde 2022 selon les variables qu’on a étudiées.
+
+Après avoir visualisé le dendrogramme, on peut aller plus loin dans l’interprétation en affichant directement les groupes d’équipes sur le plan de l’ACP.
+Ce graphique permet de voir *où se situent les différents clusters* sur les deux axes principaux (ceux qui résument le plus d’information), tout *en montrant les centres de chaque groupe*.
+C’est une manière très visuelle de repérer les profils d’équipes similaires, et surtout de comparer leurs positions sur les critères étudiés (âge, buts, expérience…).
+```{r}
+fviz_cluster(res_hcpc, repel = TRUE, show.clust.cent = TRUE,
+             palette = "jco", ggtheme = theme_minimal(), main = "ACP + Clustering")
+```
+Sur ce graphique, on voit clairement trois groupes qui ressortent.
+
+Le premier groupe (en bleu) est plutôt rassemblé sur la gauche. Ce sont sûrement des équipes qui ont des caractéristiques proches, comme une moyenne d’âge ou un nombre de sélections assez similaire.
+
+Le deuxième groupe (en jaune) est plus étalé, ce qui peut vouloir dire que les équipes qui le composent sont un peu plus variées, avec des profils pas forcément identiques mais qui restent dans une même tendance générale.
+
+Et enfin, il y a un troisième groupe (en gris) composé d’une seule équipe, complètement à l’écart. Visiblement, cette équipe a un profil vraiment unique, qui ne ressemble à aucun des deux autres groupes.
+
+Ce genre de représentation est vraiment utile pour repérer d’un coup d’œil les ressemblances et les écarts entre les différentes sélections nationales.
+
+
+Après avoir réalisé une ACP et un premier regroupement des équipes, on s'intéresse maintenant à une autre méthode : le clustering hiérarchique. Cette technique permet de regrouper les matchs selon des critères numériques, sans se baser sur des catégories déjà connues. Ici, on s’appuie sur quatre variables issues des matchs de Coupe du Monde : l’année du match, le nombre de buts marqués par l’équipe à domicile et à l’extérieur, ainsi que l’information sur le pays hôte.
+
+```{r}
+colnames(world_cup_matches) <- make.names(colnames(world_cup_matches))
+
+clustering_data <- world_cup_matches |>
+  select(Year, Home.Goals, Away.Goals, Host.Team) |>
+  mutate(Host.Team = as.numeric(Host.Team))
+
+clustering_data <- na.omit(clustering_data)
+
+clustering_scaled <- scale(clustering_data)
+
+distances <- dist(clustering_scaled, method = "euclidean")
+
+hc <- hclust(distances, method = "ward.D2")
+
+plot(hc, labels = FALSE, main = "Clustering hiérarchique (Ward)", xlab = "", sub = "")
+
+groupes <- cutree(hc, k = 3)
+
+clustering_data$cluster <- as.factor(groupes)
+
+
+profil_moyen <- clustering_data |>
+  group_by(cluster) |>
+  summarise(across(.cols = c(Year, Home.Goals, Away.Goals, Host.Team), .fns = mean))
+
+print(profil_moyen)
+
+fviz_dend(hc, k = 3, rect = TRUE, cex = 0.5,
+          k_colors = c("blue", "green", "darkorange"),
+          main = "Clustering hiérarchique avec 3 groupes")
+
+
+```
+Une fois le dendrogramme découpé en trois groupes, on obtient des profils de matchs assez différents les uns des autres.
+
+Le premier groupe correspond surtout aux matchs les plus anciens, ceux joués entre les années 1930 et 1970. Ce sont des rencontres où on observe peu de buts marqués, que ce soit par l’équipe à domicile ou à l’extérieur, et très peu de matchs concernent des pays organisateurs. On a donc affaire ici à une période où le jeu était sans doute plus fermé ou plus prudent.
+
+Le deuxième groupe, à l’inverse, rassemble les matchs récents, ceux d’après les années 2000. Ces matchs sont plus ouverts, avec plus de buts en moyenne, et on y retrouve aussi quelques équipes hôtes. Cela reflète l’évolution vers un football plus offensif, avec des scores souvent plus élevés.
+
+Enfin, le troisième groupe semble faire le lien entre les deux autres. Il couvre surtout les années 1970 à 2000, avec des valeurs moyennes : ni trop de buts, ni trop peu. Ce groupe regroupe aussi une plus grande part de matchs joués à domicile, ce qui peut montrer que le rôle de l’équipe hôte s’est renforcé pendant cette période.
+
+Dans l’ensemble, ce regroupement permet de suivre l’évolution du jeu à travers le temps. On voit clairement un passage d’un football plus fermé à un style plus ouvert, et le poids de l’avantage à domicile semble varier selon les décennies.
+
+
+```{r}
+# On choisit 3 clusters pour être cohérent avec l'analyse précédente
+kmeans_result <- kmeans(clustering_scaled, centers = 3, nstart = 25)
+
+# Ajout des clusters à la table
+clustering_data$kmeans_cluster <- as.factor(kmeans_result$cluster)
+
+# Visualisation
+fviz_cluster(list(data = clustering_scaled, cluster = kmeans_result$cluster),
+             ellipse.type = "convex",
+             palette = "jco",
+             main = "K-means : regroupement des matchs",
+             ggtheme = theme_minimal())
+
+```
+Dans la continuité des regroupements hiérarchiques précédents, on a réalisé ici un K-means afin de regrouper les matchs en fonction de leurs caractéristiques : l’année, les buts marqués par l’équipe à domicile et à l’extérieur, et la présence ou non d’une équipe hôte.
+
+Le graphique ci-dessus montre trois groupes de matchs bien distincts. Chaque couleur correspond à un cluster repéré par l’algorithme.
+
+On repère tout de suite un groupe très concentré à droite (en gris), qui rassemble les matchs les plus récents, avec des scores généralement plus élevés. À l’inverse, le cluster bleu sur la gauche contient des matchs beaucoup plus anciens, souvent avec moins de buts, ce qui rappelle un style de jeu plus fermé ou défensif. Le groupe central (en jaune) semble plutôt regrouper des matchs intermédiaires, issus d’une période de transition.
+
+Même si les contours ne sont pas parfaitement tranchés, cette visualisation permet de confirmer ce qu'on avait observé plus tôt avec le clustering hiérarchique : les styles de jeu et les caractéristiques des matchs évoluent dans le temps, et ces changements laissent une empreinte visible dans les données.
+
+## Conclusion générale
+
+Tout au long de ce projet, on s’est plongé dans l’univers du football pour en explorer l’évolution à travers les chiffres. À partir de plusieurs bases de données, on a pu retracer les grandes lignes de cette compétition mythique, en croisant des aspects sportifs, structurels et historiques.
+
+L’analyse univariée nous a d’abord permis de faire le tour des variables principales : combien de buts sont marqués ? Quelle est la répartition des matchs par phase ? Y a-t-il des différences notables d’âge entre les postes ? Ces premiers éléments ont posé les bases de notre exploration.
+
+En croisant les variables entre elles, on a ensuite mis en évidence des liens intéressants. Certaines relations sont évidentes (comme l’augmentation des buts au fil du temps), d’autres plus subtiles (comme l’impact modéré du poste sur l’âge). Les tests statistiques nous ont permis d’aller au-delà des intuitions, en mesurant ce qui tient vraiment dans les données.
+
+Enfin, grâce à l’analyse en composantes principales et aux méthodes de classification, on a pris du recul sur l’ensemble des données. Ces outils nous ont offert une vue d’ensemble claire, montrant que le tournoi a bien changé avec le temps : plus de matchs, plus d’équipes, et un style de jeu devenu plus offensif. On a aussi pu repérer des groupes d’éditions ou de matchs qui se ressemblent, ou au contraire, qui se démarquent fortement.
+
+Ce projet a été l’occasion d’appliquer concrètement tous les outils vus en cours, tout en découvrant des choses intéressantes sur l’évolution du football à l’échelle mondiale.
