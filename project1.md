@@ -136,21 +136,23 @@ Il met en avant des compétences essentielles pour un poste de **Data Analyst / 
 ---
 ---
 
+---
+
 # 💻 Code source complet
 
-Le code complet utilisé pour l’analyse statistique et la visualisation de la Coupe du Monde est disponible ici :
+Le code R complet utilisé pour l’analyse de la Coupe du Monde est disponible ici :
 
-👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe_du_monde.Rmd)**
+👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe%20du%20monde.Rmd)**
 
 Ce fichier contient :
 
-- l’importation et le nettoyage des données (world_cups.csv, world_cup_matches.csv)  
+- l’importation des trois bases (world_cups.csv, world_cup_matches.csv, data_dictionary.csv)  
+- la préparation et le nettoyage des données  
 - les analyses univariées et bivariées  
-- les graphiques réalisés avec ggplot2  
-- l’analyse statistique (tables, tendances, comparaisons)  
-- la préparation des données pour les tests statistiques  
-- la construction des différentes visualisations  
-- les conclusions et interprétations
+- la création de toutes les visualisations (ggplot2)  
+- l’analyse statistique et les tableaux  
+- l’interprétation des résultats  
+- la structure complète du projet en R Markdown avec les commentaires intégrés
 
 Ce fichier permet d’examiner l’ensemble du travail technique réalisé dans ce projet.
 # 🔗 Retour aux projets  
