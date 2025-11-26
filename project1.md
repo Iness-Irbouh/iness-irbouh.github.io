@@ -134,6 +134,24 @@ Ce projet illustre ma capacité à réaliser un **projet data complet**, incluan
 Il met en avant des compétences essentielles pour un poste de **Data Analyst / Data Scientist**.
 
 ---
+---
 
+# 💻 Code source complet
+
+Le code complet utilisé pour l’analyse statistique et la visualisation de la Coupe du Monde est disponible ici :
+
+👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe du monde.Rmd)**
+
+Ce fichier contient :
+
+- l’importation et le nettoyage des données (world_cups.csv, world_cup_matches.csv)  
+- les analyses univariées et bivariées  
+- les graphiques réalisés avec ggplot2  
+- l’analyse statistique (tables, tendances, comparaisons)  
+- la préparation des données pour les tests statistiques  
+- la construction des différentes visualisations  
+- les conclusions et interprétations
+
+Ce fichier permet d’examiner l’ensemble du travail technique réalisé dans ce projet.
 # 🔗 Retour aux projets  
 👉 [Revenir à la liste des projets](projects.md)
