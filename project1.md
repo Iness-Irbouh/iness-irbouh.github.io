@@ -140,7 +140,7 @@ Il met en avant des compétences essentielles pour un poste de **Data Analyst / 
 
 Le code complet utilisé pour l’analyse statistique et la visualisation de la Coupe du Monde est disponible ici :
 
-👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe du monde.Rmd)**
+👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe_du_monde.Rmd)**
 
 Ce fichier contient :
 
