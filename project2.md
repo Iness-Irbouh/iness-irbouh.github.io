@@ -1,6 +1,6 @@
-# 🤖 Projet 2 – Prédiction du Churn Client (Machine Learning)
+# Projet 2 – Prédiction du Churn Client (Utilisation de méthode de Machine Learning)
 
-## 🎯 Objectif du projet
+## Objectif du projet
 L’objectif de ce projet est de prédire si un client quitte la banque ou non.
 Pour cela, j’ai appliqué plusieurs méthodes de Machine Learning et comparé leurs performances.
 
@@ -15,7 +15,7 @@ C’est un projet concret basé sur un vrai jeu de données utilisé dans l’an
 
 ---
 
-## 📁 1. Description des données
+## 1. Description des données
 J’ai utilisé le fichier **Churn_Modelling.csv**, qui contient des informations sur 10 000 clients.
 
 Les données incluent notamment :  
@@ -41,7 +41,7 @@ Elles n’apportent aucune information utile pour un modèle.
 
 ---
 
-# 🧹 2. Préparation et exploration
+# 2. Préparation et exploration
 J’ai ensuite préparé les données :
 
 - transformation des variables en facteurs,  
@@ -58,9 +58,9 @@ Cela permet de repérer les tendances avant d’entraîner les modèles.
 
 ---
 
-# 🔧 3. Modèles testés
+#  3. Modèles testés
 
-## ✔ kNN (k-Nearest Neighbors)
+##  kNN (k-Nearest Neighbors)
 C’est le premier modèle que j’ai testé.  
 J’ai commencé avec **k = 5**, puis j’ai cherché le meilleur “k” possible en testant plusieurs valeurs.
 
@@ -68,7 +68,7 @@ J’ai aussi affiché la **frontière de décision**, qui montre comment le mod�
 
 ---
 
-## ✔ Régression Logistique
+## Régression Logistique
 Ensuite, j’ai testé un modèle plus classique mais très efficace : la régression logistique.
 
 J’ai créé deux versions :
@@ -84,14 +84,14 @@ J’ai ensuite analysé :
 
 ---
 
-## ✔ Naïve Bayes
+##  Naïve Bayes
 J’ai testé un modèle Naïve Bayes, qui est rapide et simple à entraîner.
 
 Pour celui-ci, j’ai aussi affiché sa frontière de décision.
 
 ---
 
-## ✔ LDA et QDA
+## LDA et QDA
 Pour compléter l’analyse, j’ai testé deux méthodes de classification :
 
 - LDA (Linear Discriminant Analysis)  
@@ -107,7 +107,7 @@ Je les ai comparés via :
 
 ---
 
-# 📉 4. Comparaison finale
+# 4. Comparaison finale
 J’ai regroupé les résultats de tous les modèles pour les comparer :
 
 - Régression Logistique  
@@ -126,7 +126,7 @@ Cela permet de choisir le modèle le plus efficace pour prédire la sortie d’u
 
 ---
 
-# 🔧 État actuel du projet
+#  État actuel du projet
 Toute la partie **code** du projet est réalisée.  
 Les modèles sont testés, les graphiques sont faits, et les résultats sont comparés.
 
@@ -138,9 +138,8 @@ Je suis donc dans la partie “explication et présentation”, la partie techni
 
 ---
 
-# 💻 Code source complet
-
-👉 **[Voir le code complet en R (Rmd)](code/project2_ml.Rmd)**
+# Code 
+ **[Voir le code complet en R (Rmd)](code/project2_ml.Rmd)**
 
 Ce fichier contient l’ensemble du code :
 - préparation des données,  
@@ -151,5 +150,4 @@ Ce fichier contient l’ensemble du code :
 - tableaux comparatifs.
 
 ---
-
-👉 [Retour aux projets](projects.md)
+ [Retour aux projets](projects.md)
