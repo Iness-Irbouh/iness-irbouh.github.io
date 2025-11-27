@@ -1,19 +1,17 @@
-# 📂 Mes Projets
+# 📁 Mes projets
 
-Bienvenue dans mon portfolio Data Analyst / Data Scientist.  
-Voici les principaux projets que j’ai réalisés.
-
----
-
-## 🏆 Projet 1 — Analyse des Coupes du Monde de Football (1930–2014)
-Analyse statistique complète, visualisations, ACP, clustering.  
-👉 [Voir le projet](project1.md)
+Voici une sélection de mes projets en Data Analyse et Machine Learning.  
+Chaque projet contient une présentation claire, les résultats et le code complet.
 
 ---
 
-## 🤖 Projet 2 — Machine Learning : Prédiction du Churn Client
-Pipeline ML complet : kNN, Régression Logistique, Naïve Bayes, LDA, QDA, ROC, tuning.  
-👉 [Voir le projet](project2.md)
+👉 [Projet 1 : Analyse Data & Machine Learning sur les Coupes du Monde](project1.md)
+
+👉 [Projet 2 : Prédiction du Churn Client (Machine Learning)](project2.md)
+
+👉 [Projet 3 : Analyse AFC – Répartition des tâches ménagères](project3.md)
+
+---
 
 ---
 
