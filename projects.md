@@ -5,14 +5,14 @@ Chaque projet contient une présentation claire, les résultats et le code compl
 
 ---
 
-👉 [Projet 1 : Analyse Data & Machine Learning sur les Coupes du Monde](project1.md)
+[Projet 1 : Analyse Data & Machine Learning sur les Coupes du Monde](project1.md)
 
-👉 [Projet 2 : Prédiction du Churn Client (Machine Learning)](project2.md)
+[Projet 2 : Prédiction du Churn Client (Machine Learning)](project2.md)
 
-👉 [Projet 3 : Analyse AFC – Répartition des tâches ménagères](project3.md)
-
----
+[Projet 3 : Analyse AFC – Répartition des tâches ménagères](project3.md)
 
 ---
 
-👉 [Retour à l’accueil](index.md)
+---
+
+[Retour à l’accueil](index.md)
