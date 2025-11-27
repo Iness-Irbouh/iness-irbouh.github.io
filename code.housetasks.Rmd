@@ -1,0 +1,325 @@
+---
+title: "Exercice 2 AFC"
+output:
+  html_document: default
+  pdf_document: default
+date: "2025-10-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+library(questionr)
+
+
+data("housetasks")
+knitr::kable(head(housetasks))
+```
+
+
+Le tableau housetasks présente la répartition de plusieurs tâches ménagères selon la personne qui les réalise au sein du couple.
+On observe que certaines activités, comme la lessive ou la préparation des repas, sont majoritairement effectuées par la femme, tandis que des tâches comme le bricolage ou l’entretien sont plus souvent réalisées par le mari.
+Certaines activités, comme le petit-déjeuner ou la vaisselle, montrent une participation plus équilibrée entre les deux partenaires, traduisant une tendance au partage des tâches dans certaines sphères domestiques.
+
+```{r}
+(reschi2<-chisq.test(housetasks))
+reschi2$expected
+```
+On fait un test du Khi-deux pour savoir si la répartition des tâches dépend de la personne qui les fait (femme, mari, ensemble ou en alternance).
+
+Le test compare le tableau réel avec un tableau théorique où les tâches seraient partagées au hasard entre les membres du couple.
+
+Le résultat montre une valeur très élevée et une p-value proche de 0, ce qui veut dire que la répartition n’est pas du tout aléatoire.
+Autrement dit, certaines tâches sont clairement associées à un membre du couple : par exemple, la lessive ou le repas sont surtout faits par la femme, alors que les réparations ou la conduite sont plutôt masculines.
+
+Le tableau affiché correspond aux valeurs attendues si les tâches étaient réparties équitablement — on l’utilise pour comparer avec les valeurs observées et voir où se situent les plus grands écarts..
+
+
+```{r}
+housetasks<-as.table(as.matrix(housetasks)) #conversion en tableau de contingence
+Freq=housetasks/sum(housetasks) 
+knitr::kable(addmargins(Freq*100),digits=1)
+```
+
+On a créé un tableau de contingence, c’est-à-dire un tableau qui croise les tâches ménagères (en lignes) avec la personne qui les réalise (en colonnes).
+Chaque case montre le pourcentage du total correspondant à une tâche et à une catégorie donnée.
+
+Ce tableau permet de voir comment les tâches sont réparties dans le couple :
+	•	Les femmes (Wife) réalisent environ 34 % de l’ensemble des tâches,
+	•	Les hommes (Husband) environ 22 %,
+	•	Et près de 29 % des tâches sont faites ensemble (Jointly).
+
+On remarque que certaines activités, comme la lessive ou la préparation des repas, sont surtout effectuées par la femme, tandis que les réparations sont presque exclusivement faites par le mari.
+Ce tableau est une étape essentielle avant une AFC, car il sert de base de départ pour analyser les liens entre les lignes (tâches) et les colonnes (personnes).
+
+```{r}
+
+Profil.Ligne =rprop(housetasks) # profils ligne 
+knitr::kable(Profil.Ligne,digits = 4)
+
+Profil.Colonne =cprop(housetasks) # profils colonne
+knitr::kable(Profil.Colonne,digits = 4)
+```
+On a calculé deux types de profils : les profils ligne et les profils colonne, qui permettent de lire le tableau de contingence sous deux angles différents.
+	•	Le premier tableau (profils ligne) montre, pour chaque tâche ménagère, la répartition entre les membres du couple.
+Par exemple, on voit que la lessive (Laundry) est faite à 88,6 % par la femme, contre seulement 1,1 % par le mari.
+Ce tableau aide donc à comparer les personnes pour une même tâche.
+	•	Le second tableau (profils colonne) montre, pour chaque catégorie de personne, quelles tâches elle réalise le plus souvent.
+Par exemple, chez les femmes (Wife), les tâches les plus fréquentes sont la lessive (26 %) et les repas (21 %), tandis que chez les hommes (Husband), on retrouve surtout les réparations (42 %) et la conduite (20 %).
+
+En résumé :
+	•	Le profil ligne décrit comment une tâche est partagée,
+	•	Le profil colonne décrit quelles tâches caractérisent chaque personne.
+
+Ces deux lectures sont essentielles pour comprendre la répartition et les différences de comportement avant de réaliser l’AFC.
+
+##ON PEUT PEUT-ÊTRE COMMENCER LA PRÉSENTATION À PARTIR D'ICI
+```{r}
+res.ca <- CA (housetasks, graph = FALSE)
+print(res.ca)  
+```
+
+On a réalisé une AFC (Analyse des Correspondances) sur le tableau housetasks afin d’étudier les liens entre les tâches ménagères et la personne qui les effectue.
+
+Le résultat indique que :
+	•	Il y a 13 catégories pour les lignes (les tâches), et 4 catégories pour les colonnes (Wife, Husband, Alternating, Jointly).
+	•	Le khi-deux très élevé (≈ 1944) et la p-value égale à 0 confirment que la répartition des tâches n’est pas indépendante : certaines tâches sont clairement liées à une catégorie (comme la lessive pour la femme, ou les réparations pour le mari).
+
+La partie inférieure du résultat montre les éléments contenus dans l’objet res.ca, qui regroupent toutes les informations nécessaires à l’analyse :
+	•	$eig pour les valeurs propres (importance des axes),
+	•	$row et $col pour les résultats des tâches (lignes) et des catégories (colonnes),
+	•	$coord, $cos2, $contrib pour les coordonnées, la qualité de représentation et la contribution de chaque élément.
+
+
+```{r}
+knitr::kable(res.ca$eig)
+fviz_eig(res.ca, addlabels = TRUE) #variance
+ fviz_eig(res.ca,choice="eigenvalue")
+```
+On a affiché les valeurs propres pour savoir combien d’axes principaux (ou dimensions) sont vraiment utiles dans notre analyse.
+Chaque axe correspond à une grande différence observée dans la répartition des tâches ménagères.
+
+Le tableau et le graphique montrent que :
+	•	Le premier axe explique 48,7 % des différences,
+	•	Le deuxième axe explique 39,9 %,
+	•	Ensemble, ils représentent près de 89 % de toute l’information du tableau.
+
+Cela veut dire que les deux premiers axes suffisent à résumer presque toute la variabilité du jeu de données.
+Le graphique (scree plot) permet de le voir facilement : les deux premières barres sont beaucoup plus hautes, donc ce sont elles qui résument le mieux la répartition des rôles dans le couple.
+
+```{r}
+fviz_screeplot (res.ca) +
+  geom_hline (yintercept = 14,3, linetype = 2, color = "red")
+```
+
+On a ajouté une ligne rouge horizontale au graphique des variances (le “scree plot”) afin de mieux repérer les axes les plus importants.
+
+Cette ligne est placée à 14,3 %, ce qui correspond à la valeur moyenne attendue si toutes les dimensions avaient la même importance.
+Ainsi, les axes situés au-dessus de cette ligne (ici les deux premiers) sont ceux qui expliquent vraiment une grande partie des différences dans les données.
+
+Le graphique montre bien que :
+	•	Le premier axe dépasse largement la ligne et explique presque la moitié des différences,
+	•	Le deuxième axe reste aussi au-dessus du seuil,
+	•	Le troisième axe, en dessous, n’apporte que peu d’information supplémentaire.
+
+En résumé, cette étape permet de confirmer visuellement que seules les deux premières dimensions sont nécessaires pour interpréter l’analyse.
+
+
+```{r}
+reschi2$statistic/sum(housetasks)
+```
+
+Ici, on a voulu mesurer la force du lien entre les deux variables : les types de tâches ménagères (lessive, repas, ménage, etc.) et la personne qui les réalise (femme, mari, ensemble…).
+
+Pour cela, on a repris la valeur du khi-deux obtenue précédemment (1944,5) et on l’a divisée par le total des observations du tableau.
+Cela permet d’obtenir une valeur moyenne du khi-deux par case, ici 1,11.
+
+Cette valeur indique à quel point les écarts entre les observations réelles et celles attendues sont importants.
+	•	Si la valeur était proche de 0, cela voudrait dire qu’il n’y a presque pas de différence entre les tâches des hommes et des femmes.
+	•	Ici, la valeur dépasse 1, ce qui montre qu’il existe un lien fort entre le type de tâche et la personne qui la fait.
+
+
+```{r}
+rowSums(res.ca$row$cos2[,1:2])
+fviz_cos2 (res.ca, choice = "row", axes = 1:2)
+rowSums(res.ca$col$cos2[,1:2]) 
+fviz_cos2 (res.ca, choice = "col", axes = 1:2)
+```
+Ici, on a cherché à savoir quelles tâches ménagères et quelles catégories de personnes (femme, mari, en alternance, ensemble) sont les mieux représentées dans notre analyse.
+
+Pour ça, on regarde une mesure appelée cos².
+Le cos² indique à quel point un élément est bien “placé” sur le graphique de l’AFC (Analyse des Correspondances).
+	•	Si la valeur est proche de 1, cela veut dire que l’élément est bien représenté dans les deux premières dimensions du graphique.
+	•	Si la valeur est faible, cela veut dire que l’élément n’est pas bien pris en compte par le graphique.
+
+Pour les tâches ménagères :
+
+On voit que les finances, les vacances, le rangement, ou encore les réparations ont des valeurs proches de 1.
+Cela veut dire que ces tâches sont bien décrites par les axes principaux du graphique et donc importantes pour l’analyse.
+En revanche, des tâches comme “official” (tâches administratives) ou “dishes” (vaisselle) ont des valeurs plus faibles, donc elles ne contribuent pas beaucoup à la construction du graphique.
+
+Pour les rôles dans le couple :
+
+Les catégories “jointly” (faites ensemble), “husband” (le mari) et “wife” (l’épouse) ont des cos² très proches de 1.
+Cela montre qu’elles sont bien représentées dans le graphique.
+La catégorie “alternating” (alterné entre les deux), en revanche, a une valeur très basse, donc elle n’apporte pas vraiment d’information utile dans ce plan
+
+```{r}
+res.ca$row$contrib[,1:2] #ligne
+res.ca$col$contrib[,1:2] #colonne
+```
+Ici, on cherche à voir quelles tâches ménagères et quelles catégories de personnes ont le plus d’influence dans l’analyse.
+
+Les contributions indiquent quels éléments comptent le plus dans la construction des axes du graphique.
+Plus la valeur est élevée, plus l’élément est important.
+
+Pour les tâches :
+
+Les tâches comme les réparations, la lessive et le repas principal ont une forte contribution sur le premier axe.
+Elles opposent clairement les comportements entre les hommes et les femmes.
+Sur le deuxième axe, les tâches comme les vacances ou les réparations ressortent davantage, elles montrent plutôt les différences entre les tâches faites ensemble ou séparément.
+
+Pour les personnes :
+
+Les catégories “mari” et “femme” sont celles qui influencent le plus le premier axe,
+tandis que “ensemble” a un rôle très important sur le deuxième.
+
+
+Contribution des lignes 
+```{r}
+fviz_contrib(res.ca, choice = "row", axes = 1, top = 10) #pour l'axe 1
+fviz_contrib(res.ca, choice = "row", axes = 2, top = 10)     #pour l'axe 2
+fviz_contrib(res.ca, choice = "row", axes = 1:2, top = 10) #pour les deux axes
+```
+
+Ici, on veut comprendre quelles tâches ménagères influencent le plus les deux premiers axes de l’AFC.
+Chaque barre bleue représente le pourcentage de contribution d’une tâche à la construction de l’axe.
+Plus la barre est haute, plus la tâche est importante dans l’analyse.
+
+Axe 1
+
+On voit que les tâches “Repairs” (réparations), “Laundry” (lessive) et “Main_meal” (repas principal) contribuent le plus.
+Cela montre que ces tâches différencient fortement les comportements entre hommes et femmes dans le couple.
+
+Axe 2
+
+Sur ce deuxième axe, ce sont surtout “Holidays” (vacances) et “Repairs” qui ressortent.
+Cela indique que cet axe distingue davantage les tâches partagées ou faites ensemble, plutôt que séparément.
+
+Ensemble des deux axes
+
+Quand on combine les deux axes, “Repairs” et “Holidays” restent les plus importantes, suivies de “Laundry” et “Main_meal”.
+ Ces tâches sont donc celles qui structurent le plus l’analyse globale, en représentant bien les différences dans la répartition des rôles au sein du couple.
+
+contribution des colonnes 
+
+```{r}
+fviz_contrib(res.ca, choice = "col", axes = 1)
+fviz_contrib(res.ca, choice = "col", axes = 2)
+fviz_contrib(res.ca, choice = "col", axes = 1:2)
+```
+Ici, on regarde quelles catégories de personnes (femme, mari, alternance, ensemble) influencent le plus les deux axes de l’AFC.
+Chaque barre montre combien chaque catégorie contribue à la formation d’un axe.
+Plus la barre est haute, plus cette catégorie joue un rôle important dans la distinction entre les types de répartition des tâches.
+
+Axe 1
+
+Les catégories “Husband”et“Wife”ont les contributions les plus fortes.
+Cela veut dire que le premier axe traduit principalement l’opposition entre les tâches faites par les femmes et celles faites par les hommes.
+
+Axe 2
+
+Sur ce deuxième axe, c’est la catégorie “Jointly” (ensemble) qui domine largement.
+Cet axe met donc en avant les tâches qui sont partagées dans le couple plutôt que réparties entre les conjoints.
+
+Ensemble des deux axes
+
+Quand on combine les deux axes, “Husband”, “Wife” et “Jointly” sont les plus importants.
+On peut donc dire que l’analyse montre deux grands contrastes :
+	•	d’un côté, les tâches genrées (homme/femme),
+	•	de l’autre, les tâches faites ensemble, symbolisant une répartition plus équilibrée.
+
+```{r}
+fviz_ca_row(res.ca, repel = TRUE, col.row = "blue")
+```
+On observe que certaines tâches comme Laundry, Main_meal, Dinner et Breakfast sont proches, traduisant un même type d’activités domestiques.
+À l’opposé, Repairs et Driving se distinguent nettement, correspondant à des tâches plus techniques, tandis que des activités comme Shopping ou Finances occupent une position plus centrale, représentant des tâches intermédiaires.
+
+```{r}
+fviz_ca_col(res.ca, repel = TRUE, col.col = "red")
+```
+On observe que Wife, située à gauche, correspond aux tâches domestiques les plus traditionnelles.
+Husband, positionné à droite, est associé aux activités plus techniques, tandis que Jointly, placé en bas du graphique, représente les tâches partagées entre les deux.
+
+```{r}
+fviz_ca_biplot (res.ca, repel = TRUE)
+```
+
+Ce graphique résume toute l’analyse des correspondances :
+il montre les liens entre les types de tâches ménagères (en bleu) et les catégories de personnes (en rouge).
+
+Axe 1 (horizontal – 48,7 %)
+
+Le premier axe sépare clairement :
+	•	à gauche ➡️ les tâches faites par les femmes (Laundry, Main_meal, Dinner, Breakfast) ;
+	•	à droite ➡️ les tâches faites par les hommes (Repairs, Driving).
+Cet axe illustre donc la répartition “traditionnelle” des rôles dans le couple.
+
+Axe 2 (vertical – 39,9 %)
+
+Le deuxième axe distingue :
+	•	en bas ➡️ les tâches faites en commun (Shopping, Dishes, Finances, Holidays) associées à “Jointly” ;
+	•	en haut ➡️ certaines tâches plus individuelles ou déléguées, comme Official ou Alternating.
+Cet axe représente donc le degré de partage ou de coopération dans les tâches.
+
+Lecture globale
+	•	“Wife” est très proche de Laundry et Meals, montrant que ces tâches sont principalement faites par les femmes.
+	•	“Husband” est associé à Repairs et Driving, donc plutôt des tâches techniques.
+	•	“Jointly” se rapproche de Shopping et Dishes, des activités souvent partagées.
+
+
+```{r}
+fviz_ca_biplot (res.ca,
+                map = "rowprincipal", arrow = c(TRUE, TRUE),
+                repel = TRUE) 
+```
+
+```{r}
+fviz_ca_biplot (res.ca,
+                map = "colprincipal", arrow = c(TRUE, TRUE),
+                repel = TRUE)
+```
+
+Ces deux graphiques représentent la même analyse que précédemment, mais avec des flèches pour mieux montrer les relations entre les variables (en rouge les catégories de personnes, en bleu les tâches ménagères).
+
+Interprétation générale
+
+Les flèches partent du centre : plus elles s’éloignent, plus la tâche ou la catégorie est spécifique ou marquée.
+Les directions montrent quelles tâches sont associées à quelles personnes :
+	•	Les flèches dans la même direction indiquent une corrélation positive (elles vont ensemble).
+	•	Celles en sens opposé indiquent une opposition entre les comportements.
+
+Axe 1 (horizontal – 48,7 %)
+
+Cet axe traduit encore une fois l’opposition entre les tâches féminines et masculines :
+	•	À gauche, près de “Wife”, on retrouve Laundry, Main_meal et Dinner → tâches plutôt associées aux femmes.
+	•	À droite, près de “Husband”, on observe Repairs et Driving → tâches associées aux hommes.
+
+Axe 2 (vertical – 39,9 %)
+
+Le deuxième axe montre une autre opposition :
+	•	En bas, “Jointly” est lié à Holidays, Finances et Shopping, donc aux tâches partagées dans le couple.
+	•	En haut, “Alternating” est plus proche de Official, ce qui représente des tâches moins régulières ou échangées entre les deux.
+
+En résumé
+
+Ces graphiques confirment les tendances déjà observées :
+Les femmes s’occupent majoritairement des tâches domestiques quotidiennes,
+Les hommes des tâches techniques ou ponctuelles,
+Certaines activités (courses, finances, vacances) sont plus équilibrées et partagées.
+
+Ce type de visualisation permet donc de repérer facilement les liens entre les catégories et de voir comment elles structurent la répartition des rôles dans le couple.
