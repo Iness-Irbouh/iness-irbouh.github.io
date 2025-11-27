@@ -1,0 +1,645 @@
+---
+title: "projet version 2"
+output:
+  pdf_document: default
+  html_document: default
+date: "2025-11-24"
+---
+
+```{r}
+library(fairml)
+library(ggplot2)
+library(caret)
+library(plotROC)
+library(reshape2)
+```
+
+```{r}
+# ======================================================
+# 1) DONNÉES
+# ======================================================
+D = read.csv("Churn_Modelling.csv", header = TRUE)
+
+# On enlève ce qui est demandé
+D = D[, !(names(D) %in% c("RowNumber","CustomerId","Surname"))]
+
+# Variables qualitatives
+D$Exited          = as.factor(D$Exited)
+D$Geography       = as.factor(D$Geography)
+D$Gender          = as.factor(D$Gender)
+D$HasCrCard       = as.factor(D$HasCrCard)
+D$IsActiveMember  = as.factor(D$IsActiveMember)
+
+# Exploration
+dim(D); str(D); summary(D)
+```
+
+```{r}
+# ======================================================
+# 2) NUAGE DE POINTS (Age vs Balance)
+# ======================================================
+ggplot(D, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  ggtitle("Nuage de points : Age vs Balance")
+```
+
+```{r}
+# ======================================================
+# 3) APPRENTISSAGE / TEST (75% / 25%)
+# ======================================================
+set.seed(300)
+indxTrain = createDataPartition(y = D$Exited, p = 0.75, list = FALSE)
+Dtrain = D[indxTrain, ]
+Dtest  = D[-indxTrain, ]
+
+ggplot(Dtrain, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  ggtitle("Base apprentissage : Age vs Balance")
+```
+
+```{r}
+# ======================================================
+# 4) KNN avec k = 5
+# ======================================================
+ctrl = trainControl(method = "none")
+
+fit.5knn = train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "knn",
+  tuneGrid = data.frame(k = 5),
+  trControl = ctrl,
+  preProcess = c("center", "scale")
+)
+
+# Prédictions test
+pred.5knn = predict(fit.5knn, newdata = Dtest[, c("Age", "Balance")])
+
+# Matrice de confusion
+mat = confusionMatrix(data = pred.5knn, reference = Dtest$Exited, positive = "1")
+print(mat$table)
+mat$overall["Accuracy"]
+```
+
+```{r}
+# ======================================================
+# 5) FRONTIÈRE DE DÉCISION (TP identique)
+# ======================================================
+x1.points = seq(min(Dtrain$Age),    max(Dtrain$Age),    length = 50)
+x2.points = seq(min(Dtrain$Balance), max(Dtrain$Balance), length = 50)
+
+Grid = expand.grid(Age = x1.points, Balance = x2.points)
+
+predGrid.5knn = predict(fit.5knn, newdata = Grid)
+
+pr = data.frame(
+  x = Grid$Age,
+  y = Grid$Balance,
+  z = as.numeric(predGrid.5knn)
+)
+
+ggplot(Dtrain, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  geom_contour(data = pr, aes(x = x, y = y, z = z),
+               breaks = c(1, 1.9)) +
+  ggtitle("Frontière de décision – KNN (Age + Balance)")
+```
+```{r}
+# ======================================================
+# 6) TAUX D’ERREUR D’AJUSTEMENT
+# ======================================================
+Fit = predict(fit.5knn, newdata = Dtrain[, c("Age", "Balance")])
+
+mat.fit = confusionMatrix(data = Fit, reference = Dtrain$Exited, positive = "1")
+print(mat.fit$table)
+
+mat.fit$overall["Accuracy"]
+```
+
+```{r}
+# ======================================================
+# 7) COMPARAISON POUR k = 1 et k = 15
+# ======================================================
+
+# k = 1
+fit.1knn = train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "knn",
+  tuneGrid = data.frame(k = 1),
+  trControl = ctrl,
+  preProcess = c("center", "scale")
+)
+pred.1knn = predict(fit.1knn, newdata = Dtest[, c("Age","Balance")])
+mat.1 = confusionMatrix(pred.1knn, Dtest$Exited, positive = "1")
+mat.1$overall["Accuracy"]
+
+# k = 15
+fit.15knn = train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "knn",
+  tuneGrid = data.frame(k = 15),
+  trControl = ctrl,
+  preProcess = c("center", "scale")
+)
+pred.15knn = predict(fit.15knn, newdata = Dtest[, c("Age","Balance")])
+mat.15 = confusionMatrix(pred.15knn, Dtest$Exited, positive = "1")
+mat.15$overall["Accuracy"]
+```
+```{r}
+# ======================================================
+# 8) RECHERCHE d’un BON k (TP §5)
+# ======================================================
+set.seed(300)
+
+# (1) 15% pour test
+indxTest = createDataPartition(y = D$Exited, p = 0.15, list = FALSE)
+Dtest = D[indxTest,]
+
+# (2) 85% pour apprentissage/validation
+Dsub = D[-indxTest,]
+
+set.seed(390)
+indxTrain = createDataPartition(y = Dsub$Exited, p = 0.75, list = FALSE)
+Dtrain = Dsub[indxTrain,]
+Dval   = Dsub[-indxTrain,]
+
+ks = seq(1, 100, by = 5)
+acc = c()
+
+for (n in ks) {
+  fit.knn = train(
+    Exited ~ Age + Balance,
+    data = Dtrain,
+    method = "knn",
+    tuneGrid = data.frame(k = n),
+    trControl = ctrl,
+    preProcess = c("center","scale")
+  )
+  pred.knn = tryCatch(
+    predict(fit.knn, newdata = Dval[, c("Age","Balance")]),
+    error = function(e) NA
+  )
+  if (any(is.na(pred.knn))) { acc = c(acc, NA); next }
+  
+  mat = confusionMatrix(pred.knn, Dval$Exited, positive = "1")
+  acc = c(acc, mat$overall["Accuracy"])
+}
+
+E = data.frame(Nbre_voisins = ks, Taux_prediction = acc)
+
+ggplot(E, aes(x = Nbre_voisins, y = Taux_prediction)) +
+  geom_point(size = 2, color = "blue") +
+  geom_line(color = "blue", linewidth = 0.5) +
+  geom_hline(yintercept = max(acc, na.rm = TRUE),
+             linetype = "dashed", color = "green") +
+  ggtitle("Recherche du k optimal – Age + Balance") +
+  xlab("Nombre de voisins") + ylab("Accuracy")
+
+which.max(acc)
+k.opt = ks[which.max(acc)]
+k.opt
+```
+```{r}
+# ======================================================
+# 1) MODÈLE LOGISTIQUE SIMPLE
+# ======================================================
+fit.lr <- train(
+  Exited ~ ., data = Dtrain,
+  method = "glm", family = "binomial"
+)
+
+summary(fit.lr$finalModel)
+varImp(fit.lr)
+```
+
+```{r}
+# ======================================================
+# 2) MODÈLE LOGISTIQUE AVEC CRITÈRE AIC
+# ======================================================
+fit.lr.aic <- train(
+  Exited ~ ., data = Dtrain,
+  method = "glmStepAIC", family = "binomial"
+)
+
+summary(fit.lr.aic$finalModel)
+varImp(fit.lr.aic)
+```
+```{r}
+# ======================================================
+# 3) PRÉDICTIONS LR : PROBABILITÉS ET CLASSES
+# ======================================================
+score.lr = predict(fit.lr, newdata = Dtest, type = "prob")
+head(score.lr)
+
+class.lr = predict(fit.lr, newdata = Dtest)
+```
+
+```{r}
+# ======================================================
+# 4) MATRICE DE CONFUSION DU MODÈLE LOGISTIQUE
+# ======================================================
+mat.lr = confusionMatrix(
+  class.lr,
+  Dtest$Exited,
+  positive = "1"
+)
+
+print(mat.lr$table)
+mat.lr$overall["Accuracy"]
+mat.lr$byClass[c("Specificity","Sensitivity")]
+```
+
+```{r}
+# ======================================================
+# 5) COURBE ROC ET AUC DU MODÈLE LOGISTIQUE
+# ======================================================
+lab <- as.numeric(Dtest$Exited == "1")
+
+rocdata <- data.frame(
+  D = lab,
+  M = score.lr[,2]
+)
+
+g <- ggplot(rocdata, aes(d=D, m=M)) + geom_roc()
+g + annotate("text", x=0.75, y=0.25,
+             label=paste("AUC =", round(calc_auc(g)$AUC,4)))
+```
+PARTIE 3 :  Linear/Quadratic Classifier
+
+```{r}
+# ======================================================
+# 1) REPRÉSENTATION DES DONNÉES (ADAPTÉ AU SUJET CHURN)
+# ======================================================
+
+ggplot(D, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  scale_shape_manual(values = c(1,17)) +
+  ggtitle("Données clients : Age vs Balance")
+```
+```{r}
+# ======================================================
+# 2) DISTRIBUTION PAR CLASSE + PROBABILITÉS A PRIORI
+# ======================================================
+
+# Probabilités a priori de la variable cible
+prop.table(table(D$Exited))
+
+ggplot(D, aes(x = Age, color = Exited)) +
+  geom_histogram(fill = "white", position = "dodge", bins = 30) +
+  theme(legend.position = "top") +
+  ggtitle("Distribution de Age selon la classe Exited")
+
+ggplot(D, aes(x = Balance, color = Exited)) +
+  geom_histogram(fill = "white", position = "dodge", bins = 30) +
+  theme(legend.position = "top") +
+  ggtitle("Distribution de Balance selon la classe Exited")
+```
+
+
+```{r}
+# NAIVE BAYES
+ctrl.nb <- trainControl(method="cv", number=10)
+
+fit.nb <- train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "nb",
+  trControl = ctrl.nb
+)
+
+pred.nb <- predict(fit.nb, newdata = Dtest[,c("Age","Balance")])
+
+mat.nb <- confusionMatrix(pred.nb, Dtest$Exited, positive="1")
+mat.nb$overall["Accuracy"]
+mat.nb$byClass[c("Sensitivity","Specificity")]
+```
+
+```{r}
+# ======================================================
+# 5) FRONTIÈRE DE DÉCISION — BAYÉSIEN NAÏF (Age + Balance)
+# ======================================================
+
+# Grille
+x1.points <- seq(min(Dtrain$Age),    max(Dtrain$Age),    length = 300)
+x2.points <- seq(min(Dtrain$Balance), max(Dtrain$Balance), length = 300)
+
+Grid <- expand.grid(
+  Age    = x1.points,
+  Balance = x2.points
+)
+
+# Prédictions pour la grille
+predGrid.nb <- predict(fit.nb, newdata = Grid)
+
+pr.nb <- data.frame(
+  x = Grid$Age,
+  y = Grid$Balance,
+  z = as.numeric(predGrid.nb)
+)
+
+ggplot(Dtrain, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  geom_contour(
+    data = pr.nb,
+    aes(x = x, y = y, z = z),
+    breaks = c(1.5),
+    color = "darkgreen"
+  ) +
+  ggtitle("Frontière de décision — Bayésien Naïf (Age + Balance)")
+```
+
+
+```{r}
+# LDA & QDA
+fit.lda <- train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "lda",
+  trControl = ctrl.nb
+)
+
+fit.qda <- train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "qda",
+  trControl = ctrl.nb
+)
+
+pred.lda <- predict(fit.lda, newdata = Dtest[,c("Age","Balance")])
+pred.qda <- predict(fit.qda, newdata = Dtest[,c("Age","Balance")])
+
+mat.lda <- confusionMatrix(pred.lda, Dtest$Exited, positive="1")
+mat.qda <- confusionMatrix(pred.qda, Dtest$Exited, positive="1")
+
+mat.lda$overall["Accuracy"]
+mat.qda$overall["Accuracy"]
+
+mat.lda$byClass[c("Sensitivity","Specificity")]
+mat.qda$byClass[c("Sensitivity","Specificity")]
+```
+```{r}
+# ======================================================
+# 8) FRONTIÈRES DE DÉCISION LDA / QDA (Age + Balance)
+# ======================================================
+
+# Grille 2D
+x1.points <- seq(min(Dtrain$Age),    max(Dtrain$Age),    length = 500)
+x2.points <- seq(min(Dtrain$Balance), max(Dtrain$Balance), length = 500)
+
+Grid <- expand.grid(
+  Age     = x1.points,
+  Balance = x2.points
+)
+
+# ======================================================
+# LDA
+# ======================================================
+predGrid.lda <- predict(fit.lda, newdata = Grid)
+
+pr.lda <- data.frame(
+  x = Grid$Age,
+  y = Grid$Balance,
+  z = as.numeric(predGrid.lda)
+)
+
+ggplot(Dtrain, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  geom_contour(
+    data = pr.lda,
+    aes(x = x, y = y, z = z),
+    breaks = c(1.5),
+    color = "darkgreen"
+  ) +
+  ggtitle("Frontière de décision – LDA (Age + Balance)")
+
+# ======================================================
+# QDA
+# ======================================================
+predGrid.qda <- predict(fit.qda, newdata = Grid)
+
+pr.qda <- data.frame(
+  x = Grid$Age,
+  y = Grid$Balance,
+  z = as.numeric(predGrid.qda)
+)
+
+ggplot(Dtrain, aes(x = Age, y = Balance)) +
+  geom_point(size = 2, aes(pch = Exited, col = Exited)) +
+  geom_contour(
+    data = pr.qda,
+    aes(x = x, y = y, z = z),
+    breaks = c(1.5),
+color = "darkgreen"
+  ) +
+  ggtitle("Frontière de décision – QDA (Age + Balance)")
+```
+
+```{r}
+# ======================================================
+# 9) CALCUL DES PROBABILITÉS PRÉDITES — TOUS MODÈLES
+# ======================================================
+
+# k optimal trouvé précédemment
+k.opt
+
+# kNN optimal (Age + Balance)
+fit.knn.opt <- train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "knn",
+  tuneGrid = data.frame(k = k.opt),
+  trControl = trainControl(method = "none"),
+  preProcess = c("center","scale")
+)
+
+# Probabilités LR
+score.lr <- predict(fit.lr, newdata = Dtest, type = "prob")[, "1"]
+
+# Probabilités KNN optimal
+score.knn <- predict(
+  fit.knn.opt,
+  newdata = Dtest[, c("Age", "Balance")],
+  type = "prob"
+)[, "1"]
+
+# Probabilités LDA
+score.lda <- predict(
+  fit.lda,
+  newdata = Dtest[, c("Age", "Balance")],
+  type = "prob"
+)[, "1"]
+
+# Probabilités QDA
+score.qda <- predict(
+  fit.qda,
+  newdata = Dtest[, c("Age", "Balance")],
+  type = "prob"
+)[, "1"]
+
+# Labels 0/1
+labels <- as.numeric(Dtest$Exited == "1")
+```
+
+
+```{r}
+extract_prob <- function(pred_prob) {
+
+  # On cherche une colonne nommée "1" ou "exit"
+  col <- which(colnames(pred_prob) %in% c("1", "exit"))
+
+  if (length(col) == 0) {
+    # Si aucune colonne churn n'existe (ex. pas de churners dans Dtest)
+    return(rep(0, nrow(pred_prob)))
+  } else {
+    return(pred_prob[, col])
+  }
+}
+
+# LR
+prob.lr <- predict(fit.lr, newdata = Dtest, type = "prob")
+score.lr <- extract_prob(prob.lr)
+
+# kNN (avec Age + Balance)
+prob.knn <- predict(fit.5knn, newdata = Dtest[,c("Age","Balance")], type = "prob")
+score.knn <- extract_prob(prob.knn)
+
+# LDA
+prob.lda <- predict(fit.lda, newdata = Dtest[,c("Age","Balance")], type = "prob")
+score.lda <- extract_prob(prob.lda)
+
+# QDA
+prob.qda <- predict(fit.qda, newdata = Dtest[,c("Age","Balance")], type = "prob")
+score.qda <- extract_prob(prob.qda)
+
+# Labels 0/1
+lab <- as.numeric(Dtest$Exited == "1")
+
+rocdata <- rbind(
+  data.frame(D = lab, M = score.lr,  Model ="Logistique"),
+  data.frame(D = lab, M = score.knn, Model ="kNN"),
+  data.frame(D = lab, M = score.lda, Model ="LDA"),
+  data.frame(D = lab, M = score.qda, Model ="QDA")
+)
+
+ggplot(rocdata, aes(d = D, m = M, color = Model)) +
+  geom_roc() +
+  ggtitle("Courbes ROC – Age + Balance")
+
+
+
+```
+```{r}
+class.knn <- predict(fit.5knn, newdata=Dtest[,c("Age","Balance")])
+class.lda <- predict(fit.lda,  newdata=Dtest[,c("Age","Balance")])
+class.qda <- predict(fit.qda,  newdata=Dtest[,c("Age","Balance")])
+
+mat.knn <- confusionMatrix(class.knn, Dtest$Exited, positive="1")
+mat.lr  <- confusionMatrix(class.lr,  Dtest$Exited, positive="1")
+mat.lda <- confusionMatrix(class.lda, Dtest$Exited, positive="1")
+mat.qda <- confusionMatrix(class.qda, Dtest$Exited, positive="1")
+
+Perf <- data.frame(
+  Modèle      = c("Logistique", "kNN", "LDA", "QDA"),
+  Accuracy    = c(mat.lr$overall["Accuracy"],
+                  mat.knn$overall["Accuracy"],
+                  mat.lda$overall["Accuracy"],
+                  mat.qda$overall["Accuracy"]),
+  Sensibilité = c(mat.lr$byClass["Sensitivity"],
+                  mat.knn$byClass["Sensitivity"],
+                  mat.lda$byClass["Sensitivity"],
+                  mat.qda$byClass["Sensitivity"]),
+  Specificité = c(mat.lr$byClass["Specificity"],
+                  mat.knn$byClass["Specificity"],
+                  mat.lda$byClass["Specificity"],
+                  mat.qda$byClass["Specificity"])
+)
+
+Perf
+```
+
+```{r}
+# ======================================================
+# RECHERCHE K OPTIMAL KNN — AVEC ROC
+# ======================================================
+
+D$Exited <- factor(ifelse(D$Exited == 1, "exit", "stay"))
+
+set.seed(300)
+indxTest <- createDataPartition(y = D$Exited, p = 0.15, list = FALSE)
+Dtest <- D[indxTest, ]
+Dsub  <- D[-indxTest, ]
+
+set.seed(390)
+indxTrain <- createDataPartition(y = Dsub$Exited, p = 0.75, list = FALSE)
+Dtrain <- Dsub[indxTrain, ]
+Dval   <- Dsub[-indxTrain, ]
+
+# Contrôle CV pour ROC
+ctrlCV <- trainControl(
+  method = "cv",
+  number = 10,
+  classProbs = TRUE,
+  summaryFunction = twoClassSummary,   # nécessaire pour COMPUTE ROC
+  savePredictions = TRUE
+)
+
+# Grille des k testés
+ks <- seq(1, 100, by = 5)
+
+# Entraînement CV
+fitCV.knn <- train(
+  Exited ~ Age + Balance,
+  data = Dtrain,
+  method = "knn",
+  tuneGrid = data.frame(k = ks),
+  trControl = ctrlCV,
+  preProcess = c("center", "scale"),
+  metric = "ROC"   # IMPORTANT
+)
+```
+
+
+```{r}
+# ======================================================
+# GRAPH ROC(k) — ADAPTE AU PROJET CHURN
+# ======================================================
+
+# Maximum ROC observé
+roc.max = max(fitCV.knn$results$ROC)
+
+# Nombre d'observations utilisées pour la CV
+nsub = nrow(Dsub)
+
+# Borne basse de confiance (95%)
+a = roc.max - 1.96 * sqrt((roc.max * (1 - roc.max)) / nsub)
+
+# k optimal trouvé
+k.opt = fitCV.knn$bestTune$k
+
+# Graphique
+ggplot(fitCV.knn$results, aes(x = k, y = ROC)) +
+  geom_line(size = 0.7, color = "blue") +
+  geom_point(size = 1.8, color = "blue") +
+  
+  # Ligne horizontale ROC max
+  geom_hline(yintercept = roc.max, 
+             col = "red", linewidth = 0.8, linetype = "dashed") +
+  
+  # Ligne horizontale intervalle de confiance
+  geom_hline(yintercept = a, 
+             col = "darkgreen", linewidth = 0.8, linetype = "dotted") +
+  
+  # Ligne verticale k optimal
+  geom_vline(xintercept = k.opt, 
+             color = "orange", linewidth = 1.2) +
+  
+  labs(
+    title = "ROC(k) – Détermination du k optimal (Validation croisée)",
+    x = "Nombre de voisins (k)",
+    y = "ROC"
+  ) +
+  theme_minimal()
+```
+
