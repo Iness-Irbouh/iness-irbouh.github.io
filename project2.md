@@ -1,24 +1,24 @@
-# 🤖 Projet 2 — Prédiction du Churn Client (Machine Learning)
+# 🤖 Projet 2 – Prédiction du Churn Client (Machine Learning)
 
 ## 🎯 Objectif du projet
-L’objectif de ce projet est de prédire si un client quitte la banque ou non.  
+L’objectif de ce projet est de prédire si un client quitte la banque ou non.
 Pour cela, j’ai appliqué plusieurs méthodes de Machine Learning et comparé leurs performances.
 
-Ce projet m’a permis de mettre en pratique tout un processus complet :  
-- préparation et nettoyage des données,  
-- exploration des variables,  
-- mise en place de plusieurs modèles,  
-- comparaison des résultats,  
-- création de graphiques explicatifs.
+Ce projet m’a permis de mettre en pratique un processus complet :  
+- préparation et nettoyage des données  
+- exploration des variables  
+- mise en place de plusieurs modèles  
+- comparaison des résultats  
+- création de graphiques explicatifs  
 
 C’est un projet concret basé sur un vrai jeu de données utilisé dans l’analyse du churn bancaire.
 
 ---
 
-# 📁 1. Description des données
-J’ai utilisé le fichier **Churn_Modelling.csv**, qui contient des informations sur 10 000 clients d’une banque.
+## 📁 1. Description des données
+J’ai utilisé le fichier **Churn_Modelling.csv**, qui contient des informations sur 10 000 clients.
 
-Les données incluent :  
+Les données incluent notamment :  
 - Âge  
 - Genre  
 - Pays  
@@ -28,13 +28,14 @@ Les données incluent :
 - Produits détenus  
 - Statut actif  
 
-La variable que l’on cherche à prédire est :  
+La variable à prédire est :
+
 **Exited** → 1 si le client quitte la banque, 0 sinon.
 
-Avant de commencer, j’ai supprimé les colonnes inutiles comme :  
+Avant de commencer, j’ai supprimé les colonnes inutiles :  
 - RowNumber  
 - CustomerId  
-- Surname  
+- Surname   
 
 Elles n’apportent aucune information utile pour un modèle.
 
