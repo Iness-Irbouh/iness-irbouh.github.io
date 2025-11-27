@@ -1,105 +1,90 @@
 # 🧹 Projet 3 – Analyse AFC sur la répartition des tâches ménagères
 
 ## 🎯 Objectif du projet
-Ce projet consiste à analyser comment plusieurs tâches ménagères sont réparties entre les membres d’un foyer (femme, mari, alternance, ou réalisé ensemble).  
-Pour cela, j’ai utilisé une **Analyse des Correspondances (AFC)** afin d’identifier les associations entre types de tâches et personnes les réalisant.
+L’objectif de ce projet est d’étudier comment différentes tâches ménagères sont réparties entre les membres d’un foyer (femme, mari, alternance, ou réalisé ensemble).  
+Pour cela, j’ai réalisé une **Analyse des Correspondances (AFC)** afin d’identifier les liens entre les tâches et les personnes qui les accomplissent.
 
 Ce projet met en avant mes compétences en :
-- statistiques descriptives,
-- tableau de contingence,
+- manipulation de tableaux de contingence,
 - test du Chi²,
-- Analyse Factorielle des Correspondances (AFC),
-- interprétation visuelle des résultats,
-- rédaction d’une analyse claire et structurée.
-
-Il est basé sur le jeu de données **housetasks**.
+- analyses factorielles (AFC),
+- visualisation et interprétation des résultats,
+- synthèse et communication des analyses.
 
 ---
 
 ## 📁 1. Données utilisées
-Le tableau comporte :
-- **13 tâches ménagères**,  
-- **4 catégories de personnes** (Wife, Husband, Alternating, Jointly).
+Le jeu de données **housetasks** contient :  
+- 13 tâches ménagères,
+- 4 catégories de personnes : Wife, Husband, Alternating, Jointly.
 
-Ces données permettent d’étudier comment les rôles sont répartis au sein du foyer.
-
----
-
-## 🧪 2. Test du Chi²
-Le test d’indépendance montre clairement que les tâches ménagères **ne sont pas réparties au hasard**.
-
-📌 Résultats clés (page 3 du PDF)  [oai_citation:1‡Exercice 2 data(housetasks) Un exo sexiste! (1) (1).pdf](sediment://file_00000000b6bc71f49cd1dd498a14a91b) :
-- X² ≈ **1944.5**  
-- p-value ≈ **0**, donc très significative  
-➡️ On rejette l’hypothèse d’indépendance : **le lien entre tâche et personne est très fort**.
-
-Exemples :
-- La lessive, les repas → surtout réalisés par la femme  
-- Les réparations, la conduite → plutôt réalisées par l’homme
+Ce tableau permet d’étudier la répartition réelle des rôles au sein du foyer.
 
 ---
 
-## 📊 3. Tableau de contingence
-Comme montré dans le document (page 4)  [oai_citation:2‡Exercice 2 data(housetasks) Un exo sexiste! (1) (1).pdf](sediment://file_00000000b6bc71f49cd1dd498a14a91b) :
-- Wife réalise environ **34 %** des tâches,
-- Husband environ **22 %**,
-- Les tâches faites ensemble représentent près de **29 %**.
+## 🧪 2. Test d’indépendance (Chi²)
+Le test du Chi² montre que la répartition des tâches **n’est pas due au hasard**.  
+Les différences entre tâches et personnes sont très significatives.
 
-Cela montre déjà des différences importantes dans la répartition.
-
----
-
-## 🧭 4. AFC : Analyse des axes
-L’AFC permet de visualiser les associations principales.
-
-✔ D’après les valeurs propres (page 6)  [oai_citation:3‡Exercice 2 data(housetasks) Un exo sexiste! (1) (1).pdf](sediment://file_00000000b6bc71f49cd1dd498a14a91b) :  
-- Axe 1 explique **48,7 %**  
-- Axe 2 explique **39,9 %**  
-→ Les deux premiers axes expliquent **89 %** de l’information.
-
-### 🔹 Axe 1 : Opposition “tâches féminines” / “tâches masculines”
-- Laundry, Main_meal → très associés à **Wife**  
-- Repairs, Driving → associés au **Husband**
-
-### 🔹 Axe 2 : Les tâches partagées
-- Jointly structure fortement l’axe 2 (page 9)  [oai_citation:4‡Exercice 2 data(housetasks) Un exo sexiste! (1) (1).pdf](sediment://file_00000000b6bc71f49cd1dd498a14a91b)  
-- Holidays, Shopping, Dishes → tâches souvent faites ensemble
+Exemples observés :
+- Les tâches comme **la lessive, les repas, le repassage** → principalement réalisées par la femme.
+- Les tâches comme **les réparations, la conduite** → plus souvent effectuées par l’homme.
+- Certaines tâches (**vaisselle, courses, vacances**) sont souvent réalisées ensemble.
 
 ---
 
-## 🎨 5. Visualisations clés
-Plusieurs graphiques issus du PDF illustrent l’analyse (pages 12 à 15)  [oai_citation:5‡Exercice 2 data(housetasks) Un exo sexiste! (1) (1).pdf](sediment://file_00000000b6bc71f49cd1dd498a14a91b) :
+## 📊 3. Résultats de l’AFC
+L’AFC permet de visualiser les associations fortes entre tâches et personnes.
 
-- **Profils lignes** : regroupement des tâches proches  
-- **Profils colonnes** : positions des rôles (Wife, Husband, Jointly…)  
-- **Graphique superposé** : correspondance entre tâches et personnes  
-- **Biplot asymétrique** : visualisation des relations avec flèches
+### 🔹 Axe 1
+Opposition entre :
+- tâches majoritairement féminines,
+- tâches majoritairement masculines.
 
-Ces graphiques montrent clairement :
-- un bloc de tâches domestiques souvent réalisées par la femme,
-- un bloc de tâches techniques plutôt masculines,
-- un ensemble de tâches partagées dans le couple.
+### 🔹 Axe 2
+Opposition entre :
+- tâches réalisées individuellement,
+- tâches effectuées **en couple**.
 
----
-
-## 🧩 6. Code R du projet
-Le code complet utilisé pour l’AFC est disponible ici :
-
-👉 **[Voir le code R du projet (Rmd)](Exercice2AFC.Rmd)**
+Les deux premiers axes expliquent près de **90 % de l’inertie**, ce qui permet une excellente interprétation visuelle.
 
 ---
 
-## 📄 7. Rapport PDF détaillé
-J’ai également produit un document visuel très complet :
+## 🎨 4. Visualisations produites
+Le projet inclut plusieurs graphiques :
+- profils lignes et colonnes,
+- biplot de l’AFC,
+- représentation des contributions,
+- représentation jointe tâches/personnes.
 
-👉 **[Voir le rapport PDF](Exercice%202%20data(housetasks)%20Un%20exo%20sexiste!%20(1)%20(1).pdf)**
+Ces graphiques facilitent l’interprétation et donnent une vision claire des regroupements.
+
+---
+
+## 💻 5. Code source du projet
+
+👉 **[Voir le code R complet (Rmd)](code.housetasks.Rmd)**
+
+Ce fichier contient :
+- le tableau de contingence,
+- le test du Chi²,
+- l’AFC complète,
+- les graphiques,
+- les interprétations de base.
+
+---
+
+## 📄 6. Rapport PDF
+
+👉 **[Voir le rapport PDF](housetasks.pdf)**
+
+Ce document regroupe :
+- les résultats détaillés,
+- les graphiques,
+- les interprétations,
+- la conclusion générale.
 
 ---
 
 ## ✅ Résumé
-Ce projet montre ma capacité à :
-- analyser un tableau de contingence,
-- mener une AFC complète,
-- interpréter les axes et contributions,
-- produire un rapport visuel clair et pédagogique,
-- combiner statistiques + visualisation + rédaction.
+Ce projet montre ma capacité à analyser un tableau de contingence, réaliser une AFC complète, interpréter les axes, produire des graphiques clairs et expliquer les résultats de façon structurée.
