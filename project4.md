@@ -44,4 +44,6 @@ Cette version permet de produire un document final clair, structuré et immédia
 Lien vers le code :  
 [Version avancée avec pandas](code/PandaVersion.py)
 
+[Retour aux projets](projects.md)
+
 ---
