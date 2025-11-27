@@ -1,10 +1,10 @@
-# 🧹 Projet 3 – Analyse AFC sur la répartition des tâches ménagères
+#  Projet D'Analyse de Données: Réaliser une AFC sur la répartition des tâches ménagères
 
-## 🎯 Objectif du projet
+## 🎯 Objectif de l'analyse
 L’objectif de ce projet est d’étudier comment différentes tâches ménagères sont réparties entre les membres d’un foyer (femme, mari, alternance, ou réalisé ensemble).  
 Pour cela, j’ai réalisé une **Analyse des Correspondances (AFC)** afin d’identifier les liens entre les tâches et les personnes qui les accomplissent.
 
-Ce projet met en avant mes compétences en :
+Ce projet permet d'effectuer:
 - manipulation de tableaux de contingence,
 - test du Chi²,
 - analyses factorielles (AFC),
@@ -22,7 +22,7 @@ Ce tableau permet d’étudier la répartition réelle des rôles au sein du foy
 
 ---
 
-## 🧪 2. Test d’indépendance (Chi²)
+##  2. Test d’indépendance (Chi²)
 Le test du Chi² montre que la répartition des tâches **n’est pas due au hasard**.  
 Les différences entre tâches et personnes sont très significatives.
 
@@ -33,15 +33,15 @@ Exemples observés :
 
 ---
 
-## 📊 3. Résultats de l’AFC
+##  3. Résultats de l’AFC
 L’AFC permet de visualiser les associations fortes entre tâches et personnes.
 
-### 🔹 Axe 1
+### Axe 1
 Opposition entre :
 - tâches majoritairement féminines,
 - tâches majoritairement masculines.
 
-### 🔹 Axe 2
+### Axe 2
 Opposition entre :
 - tâches réalisées individuellement,
 - tâches effectuées **en couple**.
@@ -50,7 +50,7 @@ Les deux premiers axes expliquent près de **90 % de l’inertie**, ce qui perme
 
 ---
 
-## 🎨 4. Visualisations produites
+## 4. Visualisations produites
 Le projet inclut plusieurs graphiques :
 - profils lignes et colonnes,
 - biplot de l’AFC,
@@ -61,7 +61,7 @@ Ces graphiques facilitent l’interprétation et donnent une vision claire des r
 
 ---
 
-## 💻 5. Code source du projet
+## 5. Code source du projet
 
 👉 **[Voir le code R du projet (Rmd)](code/code.housetasks.Rmd)**
 
@@ -74,7 +74,7 @@ Ce fichier contient :
 
 ---
 
-## 📄 6. Rapport PDF
+##  6. Rapport PDF
 
 👉 **[Voir le rapport PDF](code/housetasks.pdf)**
 
