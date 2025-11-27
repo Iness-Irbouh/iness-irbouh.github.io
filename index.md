@@ -1,6 +1,6 @@
-# 👋 Bonjour, je suis Iness Irbouh
+#  Bonjour, je suis Iness Irbouh
 
-### 🎯 Étudiante en Master 1 Data à la Recherche de stage Data Analyst / Data Scientist (Avril 2026 pour une durée de 4 à 5 mois)
+### Étudiante en Master 1 Data Science for Social Sciences à l'Université Paris Nanterre en recherche de stage Data Analyst / Data Scientist (Avril 2026 pour une durée de 4 à 5 mois)
 
 Bienvenue sur mon portfolio.  
 Vous trouverez ici mes projets en :
@@ -10,7 +10,7 @@ Vous trouverez ici mes projets en :
 - **SQL**
 ---
 
-## 🔧 Compétences principales
+## Compétences principales
 
 - **Langages :** R, Python, SQL  
 - **Statistiques :** Régression, tests, ACP, clustering  
@@ -19,12 +19,12 @@ Vous trouverez ici mes projets en :
 
 ---
 
-## 📊 Mes projets
+## Mes projets
 
-👉 [Voir mes projets](projects.md)
+[Voir mes projets](projects.md)
 
 ---
 
-## 📩 Contact
+##  Contact
 - **Email :** iness.irbouh@gmail.com
 - **LinkedIn :** https://www.linkedin.com/in/iness-irbouh-4465b2253/
