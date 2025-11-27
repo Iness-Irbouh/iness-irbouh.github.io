@@ -140,7 +140,7 @@ Je suis donc dans la partie “explication et présentation”, la partie techni
 
 # 💻 Code source complet
 
-👉 **[Voir le code complet en R (Rmd)](project2_ml.Rmd)**
+👉 **[Voir le code complet en R (Rmd)](code/project2_ml.Rmd)**
 
 Ce fichier contient l’ensemble du code :
 - préparation des données,  
