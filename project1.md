@@ -140,9 +140,13 @@ Il met en avant des compétences essentielles pour un poste de **Data Analyst / 
 
 # 💻 Code source complet
 
-Le code R complet utilisé pour l’analyse de la Coupe du Monde est disponible ici :
+Le code R complet utilisé pour l’analyse de la Coupe du Monde est disponible ici en version Rmd:
 
 👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe%20du%20monde.Rmd)**
+
+Ou ici en version html:
+
+👉 **[Voir la version HTML du projet (visualisation directe)](coupe%20du%20monde.nb.html)**
 
 Ce fichier contient :
 
