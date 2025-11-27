@@ -63,7 +63,7 @@ Ces graphiques facilitent l’interprétation et donnent une vision claire des r
 
 ## 💻 5. Code source du projet
 
-👉 **[Voir le code R complet (Rmd)](code.housetasks.Rmd)**
+👉 **[Voir le code R du projet (Rmd)](code/code.housetasks.Rmd)**
 
 Ce fichier contient :
 - le tableau de contingence,
@@ -76,7 +76,7 @@ Ce fichier contient :
 
 ## 📄 6. Rapport PDF
 
-👉 **[Voir le rapport PDF](housetasks.pdf)**
+👉 **[Voir le rapport PDF](code/housetasks.pdf)**
 
 Ce document regroupe :
 - les résultats détaillés,
