@@ -1,6 +1,6 @@
 #  Projet D'Analyse de Données: Réaliser une AFC sur la répartition des tâches ménagères
 
-## 🎯 Objectif de l'analyse
+## Objectif de l'analyse
 L’objectif de ce projet est d’étudier comment différentes tâches ménagères sont réparties entre les membres d’un foyer (femme, mari, alternance, ou réalisé ensemble).  
 Pour cela, j’ai réalisé une **Analyse des Correspondances (AFC)** afin d’identifier les liens entre les tâches et les personnes qui les accomplissent.
 
@@ -13,7 +13,7 @@ Ce projet permet d'effectuer:
 
 ---
 
-## 📁 1. Données utilisées
+## 1. Données utilisées
 Le jeu de données **housetasks** contient :  
 - 13 tâches ménagères,
 - 4 catégories de personnes : Wife, Husband, Alternating, Jointly.
@@ -63,7 +63,7 @@ Ces graphiques facilitent l’interprétation et donnent une vision claire des r
 
 ## 5. Code source du projet
 
-👉 **[Voir le code R du projet (Rmd)](code/code.housetasks.Rmd)**
+**[Voir le code R du projet (Rmd)](code/code.housetasks.Rmd)**
 
 Ce fichier contient :
 - le tableau de contingence,
@@ -76,7 +76,7 @@ Ce fichier contient :
 
 ##  6. Rapport PDF
 
-👉 **[Voir le rapport PDF](code/housetasks.pdf)**
+ **[Voir le rapport PDF](code/housetasks.pdf)**
 
 Ce document regroupe :
 - les résultats détaillés,
@@ -86,5 +86,3 @@ Ce document regroupe :
 
 ---
 
-## ✅ Résumé
-Ce projet montre ma capacité à analyser un tableau de contingence, réaliser une AFC complète, interpréter les axes, produire des graphiques clairs et expliquer les résultats de façon structurée.
