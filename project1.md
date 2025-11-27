@@ -1,6 +1,6 @@
-# 🏆 Projet 1: Analyse Data & Machine Learning sur les Coupes du Monde (1930–2014)
+# Projet 1: Analyse des Données sur les Coupes du Monde de football (1930–2014)
 
-## 🎯 Objectif du projet
+## Objectif du projet
 Ce projet a pour but d’analyser l’évolution des Coupes du Monde et les performances des équipes depuis 1930.  
 Il démontre mes compétences en :
 - manipulation et nettoyage de données,
@@ -11,7 +11,7 @@ Il démontre mes compétences en :
 
 ---
 
-# 📁 1. Données utilisées
+#  1. Données utilisées
 J’ai travaillé à partir de trois fichiers :
 - **world_cups.csv** : informations par édition (année, pays hôte, vainqueur, affluence).  
 - **world_cup_matches.csv** : détails des matchs (équipes, scores, stades).  
@@ -27,7 +27,7 @@ Ces bases couvrent plus de **800 matchs** de 1930 à 2014.
 
 ---
 
-# 📊 2. Analyse univariée
+# 2. Analyse univariée
 Objectif : comprendre la structure générale des données.
 
 ### Résultats clés
@@ -36,14 +36,9 @@ Objectif : comprendre la structure générale des données.
 - Le nombre d’équipes passe de 13 (1930) à 32 (depuis 1998).  
 - Les nations les plus titrées : Brésil (5), Allemagne (4), Italie (4).
 
-### Compétences démontrées
-- Statistiques descriptives  
-- Visualisations simples (histogrammes, courbes)  
-- dplyr / tidyr
-
 ---
 
-# 🔍 3. Analyse bivariée
+#  3. Analyse bivariée
 Objectif : étudier les relations entre variables sportives.
 
 ### Relations étudiées
@@ -58,7 +53,7 @@ Objectif : étudier les relations entre variables sportives.
 
 ---
 
-# 📉 4. Visualisations (ggplot2)
+# 4. Visualisations (ggplot2)
 Plusieurs graphiques avancés ont été produits :
 
 - évolution de l’affluence par année ;  
@@ -67,14 +62,9 @@ Plusieurs graphiques avancés ont été produits :
 - carte des pays hôtes ;  
 - scores moyens par phase du tournoi.
 
-### Compétences démontrées
-- ggplot2 (customisation, thèmes, facettes)  
-- interprétation visuelle  
-- communication des insights
-
 ---
 
-# 🤖 5. Machine Learning — Régression logistique
+# 5. Machine Learning — Régression logistique
 Objectif : prédire la probabilité qu’une équipe gagne un match en fonction de :
 - buts marqués,
 - buts encaissés,
@@ -85,29 +75,19 @@ Objectif : prédire la probabilité qu’une équipe gagne un match en fonction 
 ### Résultat
 Le modèle montre une bonne capacité de prédiction avec une interprétation claire des coefficients.
 
-### Compétences démontrées
-- préparation des données pour ML  
-- régression logistique  
-- interprétation statistique  
-- évaluation du modèle (accuracy, matrice de confusion)
-
 ---
 
-# 🔮 6. Analyse multivariée — ACP
+# 6. Analyse multivariée — ACP
 Objectif : réduire la dimension et analyser les profils d’équipes.
 
 ### Résultats
 - Les premiers axes opposent équipes offensives vs défensives.  
 - L’ACP met en évidence des groupes de nations ayant des styles similaires.
 
-### Compétences démontrées
-- FactoMineR / factoextra  
-- interprétation des axes  
-- lecture de graphiques multivariés
 
 ---
 
-# 🧩 7. Clustering (K-means)
+# 7. Clustering (K-means)
 Objectif : segmenter les équipes sur la base de leurs performances.
 
 ### Résultats
@@ -115,14 +95,10 @@ Objectif : segmenter les équipes sur la base de leurs performances.
 - Cluster 2 : équipes intermédiaires (France, Argentine, Espagne).  
 - Cluster 3 : équipes irrégulières ou émergentes.
 
-### Compétences démontrées
-- standardisation  
-- k-means  
-- interprétation des clusters
 
 ---
 
-# 🏁 8. Conclusion du projet
+# 8. Conclusion du projet
 Ce projet illustre ma capacité à réaliser un **projet data complet**, incluant :
 - collecte et préparation des données,  
 - analyses uni/bivariées,  
@@ -138,15 +114,13 @@ Il met en avant des compétences essentielles pour un poste de **Data Analyst / 
 
 ---
 
-# 💻 Code source complet
+# Code 
 
 Le code R complet utilisé pour l’analyse de la Coupe du Monde est disponible ici en version Rmd:
-
-👉 **[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe%20du%20monde.Rmd)**
+**[Voir le code R du projet Coupe du Monde (Rmd)](code/coupe%20du%20monde.Rmd)**
 
 Ou ici en version html:
-
-👉 **[Voir la version HTML du projet (visualisation directe)](coupe%20du%20monde.nb.html)**
+ **[Voir la version HTML du projet (visualisation directe)](coupe%20du%20monde.nb.html)**
 
 Ce fichier contient :
 
@@ -158,6 +132,5 @@ Ce fichier contient :
 - l’interprétation des résultats  
 - la structure complète du projet en R Markdown avec les commentaires intégrés
 
-Ce fichier permet d’examiner l’ensemble du travail technique réalisé dans ce projet.
-# 🔗 Retour aux projets  
-👉 [Revenir à la liste des projets](projects.md)
+# Retour aux projets  
+ [Revenir à la liste des projets](projects.md)
