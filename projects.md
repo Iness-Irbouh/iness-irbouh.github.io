@@ -11,6 +11,7 @@ Chaque projet contient une présentation claire, les résultats et le code compl
 
 [Projet 3 : Analyse AFC – Répartition des tâches ménagères](project3.md)
 
+[Projet 4 – Analyse des heures complémentaires (Python)](project4.md)
 ---
 
 ---
