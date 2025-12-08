@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio – Iness Irbouh</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1117;
+            font-family: "Inter", sans-serif;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding-top: 40px;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: #111827;
+            padding: 25px;
+            border-radius: 18px;
+            border: 1px solid #1f2937;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            border-color: #6366f1;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .tags span {
+            background: #1f2937;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Portfolio – Iness Irbouh</h1>
+
+        <p>Étudiante en Master 1 Data Science – projets en Python, R, SQL, Machine Learning.</p>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">🛒</div>
+                <h2>Analyse E-commerce</h2>
+                <p>Extraction automatisée et tableau de bord BI.</p>
+                <div class="tags">
+                    <span>Python</span>
+                    <span>Power BI</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🏅</div>
+                <h2>Challenge Dataviz</h2>
+                <p>Infographie primée sur la déscolarisation.</p>
+                <div class="tags">
+                    <span>Power BI</span>
+                    <span>INSEE</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🏠</div>
+                <h2>Gestion Immobilière</h2>
+                <p>Application Excel/VBA pour suivi des biens.</p>
+                <div class="tags">
+                    <span>VBA</span>
+                    <span>Excel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
