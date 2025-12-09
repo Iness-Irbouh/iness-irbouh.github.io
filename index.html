@@ -6,97 +6,300 @@
     <title>Portfolio – Iness Irbouh</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
-            background: #0d1117;
-            font-family: "Inter", sans-serif;
-            color: white;
+            background: #050814;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            color: #f9fafb;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 16px 80px;
         }
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: auto;
-            padding-top: 40px;
+        /* HEADER / HERO */
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .name {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .tagline {
+            font-size: 16px;
+            color: #9ca3af;
+            max-width: 650px;
+        }
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .pill {
+            background: #111827;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: #e5e7eb;
+            border: 1px solid #1f2937;
         }
 
-        h1 {
-            font-size: 40px;
-            font-weight: 700;
-            margin-bottom: 20px;
+        /* STRUCTURE SECTIONS */
+        section {
+            margin-top: 32px;
         }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
+        section h2 {
+            font-size: 20px;
+            margin-bottom: 12px;
         }
 
         .card {
-            background: #111827;
-            padding: 25px;
-            border-radius: 18px;
+            background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+            border-radius: 24px;
+            padding: 20px 20px 22px;
             border: 1px solid #1f2937;
-            transition: 0.2s;
+        }
+        .card p, .card li {
+            color: #e5e7eb;
+            font-size: 14px;
+        }
+        .card ul {
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+        .card hr {
+            border: none;
+            border-top: 1px solid #1f2937;
+            margin: 14px 0;
         }
 
-        .card:hover {
+        /* PROJETS */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+            margin-top: 18px;
+        }
+
+        .project-card {
+            background: #050816;
+            border-radius: 22px;
+            padding: 20px;
+            border: 1px solid #111827;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: #6366f1;
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9);
+        }
+        .project-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+        .project-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .project-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+        .project-desc {
+            font-size: 13px;
+            color: #e5e7eb;
+            margin-bottom: 14px;
+        }
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .tag-pill {
+            background: #111827;
+            border-radius: 999px;
+            padding: 3px 9px;
+            font-size: 11px;
+            color: #e5e7eb;
+            border: 1px solid #1f2937;
+        }
+        .project-link {
+            display: inline-block;
+            margin-top: 2px;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: #111827;
+            border: 1px solid #1f2937;
+        }
+        .project-card:hover .project-link {
             border-color: #6366f1;
         }
 
-        .card-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+        footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
         }
 
-        .tags span {
-            background: #1f2937;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-right: 5px;
+        @media (min-width: 768px) {
+            .name {
+                font-size: 40px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Portfolio – Iness Irbouh</h1>
-
-        <p>Étudiante en Master 1 Data Science – projets en Python, R, SQL, Machine Learning.</p>
-
-        <div class="grid">
-            <div class="card">
-                <div class="card-icon">🛒</div>
-                <h2>Analyse E-commerce</h2>
-                <p>Extraction automatisée et tableau de bord BI.</p>
-                <div class="tags">
-                    <span>Python</span>
-                    <span>Power BI</span>
-                </div>
+    <div class="wrapper">
+        <!-- HEADER / PRESENTATION -->
+        <header>
+            <div class="name">INESS IRBOUH</div>
+            <p class="tagline">
+                Étudiante en Master 1 <strong>Data Science for Social Sciences</strong> à l’Université Paris Nanterre.
+                Passionnée par l’analyse de données, les statistiques et le Machine Learning, je développe des projets
+                complets allant de la préparation des données à la modélisation et à la visualisation.
+            </p>
+            <div class="pill-row">
+                <span class="pill">R</span>
+                <span class="pill">Python</span>
+                <span class="pill">SQL</span>
+                <span class="pill">Machine Learning</span>
+                <span class="pill">Statistiques</span>
+                <span class="pill">Data Visualisation</span>
             </div>
+        </header>
 
+        <!-- SECTION A PROPOS -->
+        <section>
+            <h2>À propos de moi</h2>
             <div class="card">
-                <div class="card-icon">🏅</div>
-                <h2>Challenge Dataviz</h2>
-                <p>Infographie primée sur la déscolarisation.</p>
-                <div class="tags">
-                    <span>Power BI</span>
-                    <span>INSEE</span>
-                </div>
-            </div>
+                <p>
+                    Je m’intéresse particulièrement aux projets où les données permettent de
+                    <strong>comprendre un phénomène</strong> (sport, éducation, finance, organisation du travail…)
+                    et de proposer des <strong>analyses claires et actionnables</strong>.
+                </p>
+                <p>
+                    À travers mes projets, je mets en avant :
+                </p>
+                <ul>
+                    <li>la rigueur dans la préparation et le nettoyage des données ;</li>
+                    <li>la maîtrise des méthodes statistiques (tests, régression, ACP, clustering) ;</li>
+                    <li>l’utilisation de plusieurs outils (R, Python, pandas, ggplot2) ;</li>
+                    <li>la capacité à <strong>expliquer les résultats</strong> de façon pédagogique.</li>
+                </ul>
 
-            <div class="card">
-                <div class="card-icon">🏠</div>
-                <h2>Gestion Immobilière</h2>
-                <p>Application Excel/VBA pour suivi des biens.</p>
-                <div class="tags">
-                    <span>VBA</span>
-                    <span>Excel</span>
-                </div>
+                <hr />
+
+                <h3 style="font-size: 15px; margin: 0 0 6px;">Compétences principales</h3>
+                <ul>
+                    <li><strong>Langages :</strong> R, Python, SQL</li>
+                    <li><strong>Statistiques :</strong> analyses uni/bivariées, régression, tests, ACP, clustering</li>
+                    <li><strong>Machine Learning :</strong> kNN, régression logistique, Naïve Bayes, LDA, QDA</li>
+                    <li><strong>Visualisation :</strong> ggplot2, R Markdown, rapports HTML/PDF</li>
+                    <li><strong>Bon niveau d’anglais :</strong> lecture d’articles et rédaction technique</li>
+                </ul>
             </div>
-        </div>
+        </section>
+
+        <!-- SECTION PROJETS -->
+        <section>
+            <h2>Projets sélectionnés</h2>
+
+            <div class="projects-grid">
+
+                <!-- Projet 1 -->
+                <article class="project-card">
+                    <div class="project-icon">⚽</div>
+                    <div class="project-title">Analyse des Coupes du Monde (1930–2014)</div>
+                    <div class="project-subtitle">Analyse statistique & Machine Learning</div>
+                    <p class="project-desc">
+                        Analyse complète de l’évolution des Coupes du Monde : affluence, performances des équipes,
+                        analyses uni/bivariées, visualisations, régression logistique, ACP et clustering.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag-pill">R</span>
+                        <span class="tag-pill">ACP & clustering</span>
+                        <span class="tag-pill">Visualisation</span>
+                    </div>
+                    <a class="project-link" href="project1.md">+ Détails du projet</a>
+                </article>
+
+                <!-- Projet 2 -->
+                <article class="project-card">
+                    <div class="project-icon">📊</div>
+                    <div class="project-title">Prédiction du Churn Client</div>
+                    <div class="project-subtitle">Classification – Churn bancaire</div>
+                    <p class="project-desc">
+                        Modélisation du départ des clients d’une banque : préparation des données, kNN,
+                        régression logistique (AIC), Naïve Bayes, LDA, QDA, courbes ROC et comparaison des performances.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag-pill">R</span>
+                        <span class="tag-pill">Machine Learning</span>
+                        <span class="tag-pill">Churn</span>
+                    </div>
+                    <a class="project-link" href="project2.md">+ Détails du projet</a>
+                </article>
+
+                <!-- Projet 3 -->
+                <article class="project-card">
+                    <div class="project-icon">📉</div>
+                    <div class="project-title">AFC : Répartition des tâches ménagères</div>
+                    <div class="project-subtitle">Analyse factorielle – housetasks</div>
+                    <p class="project-desc">
+                        Étude de la répartition des tâches selon les membres du foyer via test du Chi², Analyse des
+                        Correspondances, biplots, contributions et interprétation des axes.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag-pill">R</span>
+                        <span class="tag-pill">AFC</span>
+                        <span class="tag-pill">Statistiques</span>
+                    </div>
+                    <a class="project-link" href="project3.md">+ Détails du projet</a>
+                </article>
+
+                <!-- Projet 4 -->
+                <article class="project-card">
+                    <div class="project-icon">🐍</div>
+                    <div class="project-title">Analyse des heures complémentaires</div>
+                    <div class="project-subtitle">Python – Version simple & pandas</div>
+                    <p class="project-desc">
+                        Analyse des heures complémentaires des enseignants à partir d’un fichier CSV :
+                        version Python pur et version pandas avec statistiques, fichiers Excel et graphiques.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag-pill">Python</span>
+                        <span class="tag-pill">Pandas</span>
+                        <span class="tag-pill">Data processing</span>
+                    </div>
+                    <a class="project-link" href="project4.md">+ Détails du projet</a>
+                </article>
+
+            </div>
+        </section>
+
+        <footer>
+            Portfolio réalisé par Iness Irbouh – hébergé sur GitHub Pages
+        </footer>
     </div>
 </body>
 </html>
