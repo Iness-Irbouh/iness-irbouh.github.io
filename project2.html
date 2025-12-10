@@ -6,225 +6,247 @@
 <title>Projet 2 – Prédiction du Churn Client</title>
 
 <style>
-body {
-    margin: 0;
-    background: #050814;
-    color: #e5e7eb;
-    font-family: system-ui, -apple-system, sans-serif;
-    padding: 32px;
-    line-height: 1.6;
-}
+    body {
+        margin: 0;
+        background: radial-gradient(circle at top, #020617 0, #020617 40%, #000000 100%);
+        color: #e5e7eb;
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+    }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-}
+    .wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 16px 60px;
+    }
 
-h1 {
-    font-size: 32px;
-    color: white;
-    margin-bottom: 12px;
-}
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        font-size: 13px;
+        color: #9ca3af;
+    }
 
-h2 {
-    font-size: 22px;
-    color: #93c5fd;
-    margin-top: 30px;
-}
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.9);
+        border: 1px solid rgba(148,163,184,0.3);
+        font-size: 11px;
+    }
 
-.card {
-    background: #0b0f1d;
-    border-radius: 16px;
-    padding: 20px 24px;
-    border: 1px solid #1f2937;
-    margin-top: 14px;
-}
+    h1 {
+        font-size: 30px;
+        margin-bottom: 6px;
+    }
 
-ul {
-    padding-left: 20px;
-}
+    .subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
 
-strong {
-    color: #f3f4f6;
-}
+    .glass {
+        background: rgba(15,23,42,0.85);
+        border-radius: 18px;
+        border: 1px solid rgba(148,163,184,0.4);
+        box-shadow: 0 18px 50px rgba(15,23,42,0.9);
+        padding: 18px 20px;
+        margin-bottom: 18px;
+    }
 
-a {
-    color: #93c5fd;
-}
+    h2 {
+        font-size: 20px;
+        color: #bfdbfe;
+        margin: 18px 0 10px;
+    }
 
-.button {
-    display: inline-block;
-    margin-top: 25px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: 1px solid #1f2937;
-    background: #111827;
-    color: white;
-    text-decoration: none;
-}
-.button:hover {
-    border-color: #6366f1;
-}
+    h3 {
+        font-size: 16px;
+        color: #c7d2fe;
+        margin: 12px 0 6px;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 6px 0;
+    }
+
+    a {
+        color: #93c5fd;
+    }
+
+    .button-row {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(148,163,184,0.6);
+        background: rgba(15,23,42,0.9);
+        font-size: 13px;
+        text-decoration: none;
+        color: #e5e7eb;
+    }
+
+    .btn:hover {
+        border-color: #6366f1;
+    }
 </style>
 </head>
 
 <body>
-<div class="container">
+<div class="wrapper">
 
-    <h1>Projet 2 — Prédiction du Churn Client</h1>
-
-    <div class="card">
-        <p>
-            Ce projet utilise plusieurs méthodes de Machine Learning pour prédire si un client quitte la banque.
-            Il inclut : nettoyage des données, exploration, modélisation (kNN, Logistique, Naïve Bayes, LDA, QDA),
-            comparaisons de performances et visualisations avancées.
-        </p>
+    <div class="top-bar">
+        <div>Projet 2 · R · Machine Learning</div>
+        <span class="badge">📊 Prédiction du Churn Client</span>
     </div>
 
-    <h2>Objectif du projet</h2>
-    <div class="card">
+    <h1>Prédiction du Churn Client (Banque)</h1>
+    <p class="subtitle">
+        Modélisation du départ des clients d’une banque à partir de données clients (10 000 observations) :
+        préparation, exploration, modèles de classification et comparaison des performances.
+    </p>
+
+    <div class="glass">
+        <h2>Objectif du projet</h2>
         <p>
-            L’objectif est de prédire la variable <strong>Exited</strong> (1 = client sortant) en utilisant un ensemble de variables
-            socio-démographiques et bancaires.  
-            Ce projet m’a permis de mettre en œuvre un workflow complet :
+            L’objectif est de prédire si un client quitte la banque (<strong>Exited = 1</strong>)
+            à partir de caractéristiques socio-démographiques et bancaires, en comparant plusieurs méthodes
+            de Machine Learning.
         </p>
+        <p>Le projet suit un workflow complet :</p>
         <ul>
-            <li>nettoyage et transformation des données ;</li>
-            <li>exploration statistique ;</li>
-            <li>mise en place de plusieurs modèles de classification ;</li>
-            <li>analyse comparative des performances ;</li>
-            <li>création de graphiques explicatifs.</li>
+            <li>préparation et nettoyage des données,</li>
+            <li>exploration descriptive,</li>
+            <li>mise en place de plusieurs modèles,</li>
+            <li>évaluation et comparaison des performances,</li>
+            <li>visualisation des résultats (frontières de décision, courbes ROC).</li>
         </ul>
     </div>
 
-    <h2>1. Description des données</h2>
-    <div class="card">
-        <p>Base utilisée : <strong>Churn_Modelling.csv</strong> (10 000 clients).</p>
-        
-        <p>Variables principales :</p>
+    <div class="glass">
+        <h2>Données utilisées</h2>
+        <p>Fichier principal : <strong>Churn_Modelling.csv</strong> (10 000 clients).</p>
+
+        <p>Variables utilisées :</p>
         <ul>
-            <li>Âge</li>
-            <li>Genre</li>
-            <li>Pays</li>
-            <li>Solde bancaire</li>
-            <li>Score crédit</li>
-            <li>Ancienneté</li>
-            <li>Nombre de produits</li>
-            <li>Statut actif</li>
+            <li>Âge, genre, pays,</li>
+            <li>solde bancaire, score crédit, ancienneté,</li>
+            <li>produits détenus, statut actif, etc.</li>
         </ul>
 
         <p>Variable cible :</p>
-        <p><strong>Exited</strong> → 1 si le client quitte la banque, 0 sinon.</p>
-
-        <p>Colonnes supprimées car inutiles :</p>
         <ul>
-            <li>RowNumber</li>
-            <li>CustomerId</li>
-            <li>Surname</li>
+            <li><strong>Exited</strong> → 1 si le client quitte la banque, 0 sinon.</li>
+        </ul>
+
+        <p>Variables supprimées car non pertinentes pour la prédiction :</p>
+        <ul>
+            <li>RowNumber,</li>
+            <li>CustomerId,</li>
+            <li>Surname.</li>
         </ul>
     </div>
 
-    <h2>2. Préparation et exploration</h2>
-    <div class="card">
-        <p>Étapes réalisées :</p>
+    <div class="glass">
+        <h2>Préparation & exploration</h2>
         <ul>
-            <li>transformation des variables en facteurs ;</li>
-            <li>vérification des valeurs manquantes ;</li>
-            <li>séparation des données : <strong>75% train / 25% test</strong> ;</li>
-            <li>visualisations exploratoires (Age vs Balance, distributions par classe).</li>
+            <li>Conversion des colonnes pertinentes en facteurs,</li>
+            <li>vérification des valeurs manquantes,</li>
+            <li>séparation des données : <strong>75% train / 25% test</strong>,</li>
+            <li>visualisations exploratoires (Age vs Balance, distributions selon la classe).</li>
         </ul>
         <p>
-            Ces analyses permettent de comprendre les tendances avant de construire les modèles.
+            Cette étape permet de détecter les principaux patterns (par exemple, certains profils plus à risque
+            de churn que d’autres).
         </p>
     </div>
 
-    <h2>3. Modèles testés</h2>
+    <div class="glass">
+        <h2>Modèles testés</h2>
 
-    <div class="card">
-        <h3 style="color:#a5b4fc;">kNN (k-Nearest Neighbors)</h3>
+        <h3>kNN (k-Nearest Neighbors)</h3>
         <p>
-            Test du modèle avec plusieurs valeurs de k.  
-            Visualisation de la <strong>frontière de décision</strong> pour comprendre la séparation des classes.
+            Premier modèle testé, avec recherche du meilleur <strong>k</strong> en testant plusieurs valeurs.
+            La frontière de décision a été visualisée pour mieux comprendre la séparation des classes.
         </p>
-    </div>
 
-    <div class="card">
-        <h3 style="color:#a5b4fc;">Régression Logistique</h3>
-        <p>
-            Deux versions créées :
-        </p>
+        <h3>Régression logistique</h3>
+        <p>Deux versions du modèle :</p>
         <ul>
-            <li>modèle simple ;</li>
-            <li>modèle amélioré via AIC (sélection automatique des meilleures variables).</li>
+            <li>modèle complet,</li>
+            <li>modèle optimisé via critère <strong>AIC</strong> (sélection des variables les plus pertinentes).</li>
         </ul>
-        <p>Analyses effectuées :</p>
+        <p>Analyses réalisées :</p>
         <ul>
-            <li>coefficients et probabilités prédites ;</li>
-            <li>matrice de confusion ;</li>
-            <li>accuracy, sensibilité, spécificité ;</li>
-            <li>courbe ROC et aire AUC.</li>
+            <li>coefficients et probabilités prédites,</li>
+            <li>matrices de confusion,</li>
+            <li>accuracy, sensibilité, spécificité,</li>
+            <li>courbes ROC et AUC.</li>
         </ul>
-    </div>
 
-    <div class="card">
-        <h3 style="color:#a5b4fc;">Naïve Bayes</h3>
+        <h3>Naïve Bayes</h3>
         <p>
-            Modèle rapide et simple, utilisé pour tester la classification probabiliste.  
-            Frontière de décision affichée.
+            Modèle probabiliste simple et rapide, utilisé avec visualisation de la frontière de décision.
         </p>
-    </div>
 
-    <div class="card">
-        <h3 style="color:#a5b4fc;">LDA & QDA</h3>
+        <h3>LDA & QDA</h3>
         <p>
-            Méthodes discriminantes permettant de visualiser la séparation linéaire ou quadratique des classes.
+            Méthodes discriminantes permettant de visualiser la séparation linéaire (LDA) ou quadratique (QDA)
+            des classes.
         </p>
-        <p>Comparaison basée sur :</p>
+        <p>Comparaison selon :</p>
         <ul>
-            <li>accuracy ;</li>
-            <li>sensibilité ;</li>
-            <li>spécificité ;</li>
+            <li>accuracy,</li>
+            <li>sensibilité,</li>
+            <li>spécificité,</li>
             <li>matrices de confusion.</li>
         </ul>
     </div>
 
-    <h2>4. Comparaison finale</h2>
-    <div class="card">
+    <div class="glass">
+        <h2>Comparaison des performances & état du projet</h2>
         <p>
-            Les performances des modèles (Logistique, kNN, Naïve Bayes, LDA, QDA) ont été regroupées et comparées
-            via leurs indicateurs clés :
+            Les performances de tous les modèles (kNN, Logistique, Naïve Bayes, LDA, QDA) sont regroupées
+            dans des tableaux comparatifs, avec indicateurs :
         </p>
         <ul>
-            <li>accuracy ;</li>
-            <li>sensibilité ;</li>
-            <li>spécificité ;</li>
-            <li>courbes ROC.</li>
+            <li>accuracy,</li>
+            <li>sensibilité,</li>
+            <li>spécificité,</li>
+            <li>AUC des courbes ROC.</li>
         </ul>
         <p>
-            Cette comparaison permet d'identifier le meilleur modèle pour prédire le churn client.
+            La partie code est entièrement finalisée.  
+            Les prochaines étapes sont la rédaction du mémoire et la préparation de la présentation orale
+            pour expliquer les résultats de manière pédagogique.
         </p>
     </div>
 
-    <h2>5. État actuel du projet</h2>
-    <div class="card">
-        <p>
-            La partie technique est totalement terminée : modèles, graphiques et analyse.  
-            Prochaines étapes :
-        </p>
+    <div class="glass">
+        <h2>Code du projet</h2>
         <ul>
-            <li>rédiger le mémoire ;</li>
-            <li>préparer la présentation orale.</li>
+            <li><a href="code/project2_ml.Rmd">📄 Code R complet (Rmd)</a></li>
         </ul>
-    </div>
 
-    <h2>Code source</h2>
-    <div class="card">
-        <p>
-            ➤ <a href="code/project2_ml.Rmd">Voir le code complet en R (Rmd)</a>
-        </p>
+        <div class="button-row">
+            <a href="index.html" class="btn">⬅ Retour au portfolio</a>
+        </div>
     </div>
-
-    <a href="index.html" class="button">⬅ Retour à l'accueil</a>
 
 </div>
 </body>
