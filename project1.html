@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projet 1 – Analyse des Coupes du Monde</title>
+
+<style>
+body {
+    margin: 0;
+    background: #050814;
+    color: #e5e7eb;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 32px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    font-size: 32px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 22px;
+    color: #93c5fd;
+    margin-top: 30px;
+}
+
+.card {
+    background: #0b0f1d;
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid #1f2937;
+    margin-top: 14px;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+strong {
+    color: #f3f4f6;
+}
+
+a {
+    color: #93c5fd;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #1f2937;
+    background: #111827;
+    color: white;
+    text-decoration: none;
+}
+.button:hover {
+    border-color: #6366f1;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Projet 1 — Analyse des Coupes du Monde (1930–2014)</h1>
+
+    <div class="card">
+        <p>
+            Projet complet d’analyse statistique des Coupes du Monde :
+            préparation des données, analyses uni/bivariées, visualisations,
+            régression logistique, ACP et clustering.
+        </p>
+    </div>
+
+    <h2>Objectif du projet</h2>
+    <div class="card">
+        <p>Ce projet a pour but d’analyser l’évolution des Coupes du Monde depuis 1930.  
+        Compétences démontrées :</p>
+        <ul>
+            <li>Nettoyage et préparation des données</li>
+            <li>Analyses statistiques (uni/bivariées)</li>
+            <li>Visualisation avec ggplot2</li>
+            <li>Machine Learning (régression logistique)</li>
+            <li>ACP et clustering</li>
+        </ul>
+    </div>
+
+    <h2>Données utilisées</h2>
+    <div class="card">
+        <p>Les données proviennent de trois fichiers :</p>
+        <ul>
+            <li><strong>world_cups.csv</strong> — informations par édition</li>
+            <li><strong>world_cup_matches.csv</strong> — détails des matchs</li>
+            <li><strong>data_dictionary.csv</strong> — dictionnaire des variables</li>
+        </ul>
+        <p><strong>Plus de 800 matchs</strong> analysés.</p>
+    </div>
+
+    <h2>Résultats clés</h2>
+    <div class="card">
+        <ul>
+            <li>L’affluence augmente fortement depuis 1970.</li>
+            <li>Record : Coupe du Monde 1994 (USA) : 3,5M spectateurs.</li>
+            <li>Équipes les plus titrées : Brésil, Allemagne, Italie.</li>
+            <li>Baisse progressive du nombre de buts/match.</li>
+        </ul>
+    </div>
+
+    <h2>Code du projet</h2>
+    <div class="card">
+        <p>Accéder au code :</p>
+        <ul>
+            <li><a href="code/coupe%20du%20monde.Rmd">📄 Code R (Rmd)</a></li>
+            <li><a href="coupe%20du%20monde.nb.html">🔍 Version HTML</a></li>
+        </ul>
+    </div>
+
+    <a href="index.html" class="button">⬅ Retour à l'accueil</a>
+
+</div>
+</body>
+</html>
