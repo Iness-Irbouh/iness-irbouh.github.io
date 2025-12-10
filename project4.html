@@ -3,152 +3,210 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Projet 4 – Analyse des Heures Complémentaires (Python)</title>
+<title>Projet 4 – Analyse des Heures Complémentaires</title>
 
 <style>
-body {
-    margin: 0;
-    background: #050814;
-    color: #e5e7eb;
-    font-family: system-ui, -apple-system, sans-serif;
-    padding: 32px;
-    line-height: 1.6;
-}
+    body {
+        margin: 0;
+        background: radial-gradient(circle at top, #020617 0, #020617 40%, #000000 100%);
+        color: #e5e7eb;
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+    }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-}
+    .wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 16px 60px;
+    }
 
-h1 {
-    font-size: 32px;
-    color: white;
-    margin-bottom: 12px;
-}
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        font-size: 13px;
+        color: #9ca3af;
+    }
 
-h2 {
-    font-size: 22px;
-    color: #93c5fd;
-    margin-top: 30px;
-}
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.9);
+        border: 1px solid rgba(148,163,184,0.3);
+        font-size: 11px;
+    }
 
-.card {
-    background: #0b0f1d;
-    border-radius: 16px;
-    padding: 20px 24px;
-    border: 1px solid #1f2937;
-    margin-top: 14px;
-}
+    h1 {
+        font-size: 30px;
+        margin-bottom: 6px;
+    }
 
-ul {
-    padding-left: 20px;
-}
+    .subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
 
-strong {
-    color: #f3f4f6;
-}
+    .glass {
+        background: rgba(15,23,42,0.85);
+        border-radius: 18px;
+        border: 1px solid rgba(148,163,184,0.4);
+        box-shadow: 0 18px 50px rgba(15,23,42,0.9);
+        padding: 18px 20px;
+        margin-bottom: 18px;
+    }
 
-a {
-    color: #93c5fd;
-}
+    h2 {
+        font-size: 20px;
+        color: #bfdbfe;
+        margin: 18px 0 10px;
+    }
 
-.button {
-    display: inline-block;
-    margin-top: 25px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: 1px solid #1f2937;
-    background: #111827;
-    color: white;
-    text-decoration: none;
-}
-.button:hover {
-    border-color: #6366f1;
-}
+    h3 {
+        font-size: 16px;
+        color: #c7d2fe;
+        margin: 12px 0 6px;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 6px 0;
+    }
+
+    a {
+        color: #93c5fd;
+    }
+
+    .button-row {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(148,163,184,0.6);
+        background: rgba(15,23,42,0.9);
+        font-size: 13px;
+        text-decoration: none;
+        color: #e5e7eb;
+    }
+
+    .btn:hover {
+        border-color: #6366f1;
+    }
 </style>
 </head>
 
 <body>
-<div class="container">
+<div class="wrapper">
 
-    <h1>Projet 4 — Analyse des Heures Complémentaires des Enseignants (Python)</h1>
-
-    <div class="card">
-        <p>
-            Ce projet analyse les <strong>heures complémentaires (HETD)</strong> réalisées par les enseignants
-            d’une UFR.  
-            Deux versions ont été développées : une version simple en Python pur et une version avancée
-            utilisant la librairie <strong>pandas</strong>.
-        </p>
+    <div class="top-bar">
+        <div>Projet 4 · Python · Data processing</div>
+        <span class="badge">🐍 Analyse des heures complémentaires (HETD)</span>
     </div>
 
-    <h2>1. Version simple (Python pur)</h2>
-    <div class="card">
+    <h1>Analyse des heures complémentaires des enseignants</h1>
+    <p class="subtitle">
+        Projet Python portant sur l’analyse des heures complémentaires (HETD) réalisées par les enseignants
+        d’une UFR, avec deux versions : une en Python “pur” et une version avancée avec pandas.
+    </p>
+
+    <div class="glass">
+        <h2>Objectif du projet</h2>
         <p>
-            Dans cette première version, aucun module externe n’a été utilisé.  
-            Le fichier CSV a été traité uniquement avec les outils natifs de Python.
+            L’objectif est de traiter les données d’heures complémentaires contenues dans le fichier
+            <strong>dataE.csv</strong>, de produire des statistiques de synthèse par département et par statut
+            d’enseignant, et de générer des fichiers exploitables (CSV / Excel) ainsi que des visualisations.
         </p>
-
-        <p>Étapes réalisées :</p>
-        <ul>
-            <li>lecture manuelle du fichier CSV avec <strong>csv.DictReader</strong> ;</li>
-            <li>nettoyage et conversion des données ;</li>
-            <li>classement des enseignants par département et statut ;</li>
-            <li>calcul des statistiques : minimum, maximum, moyenne ;</li>
-            <li>création automatique d’un fichier CSV pour chaque département ;</li>
-            <li>export d’un fichier à part pour les enseignants sans département.</li>
-        </ul>
-
         <p>
-            Cette version démontre ma capacité à :
+            Ce projet montre :
         </p>
         <ul>
-            <li>manipuler des fichiers CSV manuellement ;</li>
-            <li>gérer des structures de données Python (listes, dictionnaires) ;</li>
-            <li>écrire des fichiers de sortie ;</li>
-            <li>automatiser des tâches sans aucune dépendance externe.</li>
+            <li>la capacité à manipuler des fichiers CSV,</li>
+            <li>la maîtrise du langage Python “de base”,</li>
+            <li>l’utilisation avancée de la librairie <strong>pandas</strong>,</li>
+            <li>la génération de rapports structurés pour les décideurs.</li>
         </ul>
+    </div>
 
+    <div class="glass">
+        <h2>1. Version simple (Python pur)</h2>
+        <p>
+            Dans cette première version, aucun module externe n’est utilisé.  
+            Le fichier CSV est traité uniquement avec les bibliothèques standard de Python.
+        </p>
+        <p>Principales étapes :</p>
+        <ul>
+            <li>lecture du fichier <strong>dataE.csv</strong> avec <strong>csv.DictReader</strong>,</li>
+            <li>nettoyage et conversion des champs nécessaires (heures, départements, statut),</li>
+            <li>classement des enseignants par département et par statut,</li>
+            <li>calcul des statistiques (minimum, maximum, moyenne des HETD),</li>
+            <li>création de fichiers CSV de synthèse pour chaque département,</li>
+            <li>création d’un fichier séparé pour les enseignants sans département.</li>
+        </ul>
+        <p>
+            Cette version illustre la compréhension des structures de données
+            (listes, dictionnaires, boucles) et la gestion de fichiers sans dépendances externes.
+        </p>
         <p>
             🔗 <a href="code/TD_DATAE.py">Voir la version simple en Python</a>
         </p>
     </div>
 
-    <h2>2. Version avancée (avec Pandas)</h2>
-    <div class="card">
+    <div class="glass">
+        <h2>2. Version avancée (avec pandas)</h2>
         <p>
-            La deuxième version utilise <strong>pandas</strong> pour rendre l’analyse plus rapide, plus complète
-            et surtout plus professionnelle.
+            La seconde version reprend le même objectif mais en utilisant la librairie
+            <strong>pandas</strong> pour rendre l’analyse plus rapide, plus fiable et plus professionnelle.
         </p>
 
-        <p>Étapes réalisées :</p>
+        <p>Étapes principales :</p>
         <ul>
-            <li>importation et nettoyage du fichier <strong>dataE.csv</strong> ;</li>
-            <li>harmonisation des colonnes (statut, département, heures) ;</li>
-            <li>regroupement des enseignants par département et par statut ;</li>
-            <li>calcul automatique des statistiques descriptives ;</li>
-            <li>génération d’un fichier Excel complet regroupant tous les départements ;</li>
-            <li>création automatique d’un <strong>graphique en barres</strong> pour visualiser la moyenne des heures ;</li>
-            <li>création d’une feuille Excel par département, contenant données + graphique ;</li>
-            <li>ouverture automatique du fichier Excel final.</li>
+            <li>importation et nettoyage des données (<strong>read_csv</strong>),</li>
+            <li>harmonisation des colonnes (statut, département, heures),</li>
+            <li>regroupement par département et statut via <code>groupby</code>,</li>
+            <li>calcul automatique des <strong>min / max / moyennes</strong> des HETD,</li>
+            <li>création d’un fichier Excel récapitulatif,</li>
+            <li>génération d’un graphique en barres (moyenne des heures par département),</li>
+            <li>création d’une feuille Excel par département avec données + graphique,</li>
+            <li>ouverture automatique du fichier final.</li>
         </ul>
 
         <p>
-            Cette version apporte :
+            Cette version est proche d’un usage professionnel : elle produit un livrable clair, prêt à être
+            utilisé par une direction d’UFR ou une administration.
         </p>
-        <ul>
-            <li>un traitement plus rapide et robuste ;</li>
-            <li>des fichiers Excel professionnels ;</li>
-            <li>des visualisations automatiques ;</li>
-            <li>une automatisation complète du pipeline d’analyse.</li>
-        </ul>
 
         <p>
             🔗 <a href="code/PandaVersion.py">Voir la version avancée (pandas)</a>
         </p>
     </div>
 
-    <a href="index.html" class="button">⬅ Retour à l'accueil</a>
+    <div class="glass">
+        <h2>Conclusion</h2>
+        <p>
+            Ce projet met en avant ma capacité à :
+        </p>
+        <ul>
+            <li>passer d’un traitement “manuel” des données à une approche plus automatisée,</li>
+            <li>structurer des scripts Python pour produire des livrables concrets (CSV, Excel, graphiques),</li>
+            <li>adapter les outils utilisés (Python pur vs pandas) selon le contexte et les contraintes.</li>
+        </ul>
+
+        <div class="button-row">
+            <a href="index.html" class="btn">⬅ Retour au portfolio</a>
+        </div>
+    </div>
 
 </div>
 </body>
