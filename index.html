@@ -6,9 +6,7 @@
     <title>Portfolio – Iness Irbouh</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -18,16 +16,13 @@
             scroll-behavior: smooth;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
+        a { color: inherit; text-decoration: none; }
 
-        /* ⭐⭐ NAVBAR PREMIUM ⭐⭐ */
+
+        /* ⭐⭐⭐ NAVBAR PREMIUM ⭐⭐⭐ */
         .navbar {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
             padding: 14px 40px;
             display: flex;
@@ -47,10 +42,7 @@
             color: #a5b4fc;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 28px;
-        }
+        .nav-links { display: flex; gap: 28px; }
 
         .nav-item {
             position: relative;
@@ -60,37 +52,31 @@
             transition: 0.3s ease;
         }
 
-        .nav-item:hover {
-            color: #c7d2fe;
-        }
+        .nav-item:hover { color: #c7d2fe; }
 
         .nav-item::after {
             content: "";
             position: absolute;
-            left: 0;
-            bottom: -4px;
-            width: 0%;
-            height: 2px;
+            left: 0; bottom: -4px;
+            width: 0%; height: 2px;
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
+        .nav-item:hover::after { width: 100%; }
 
-        .nav-item:hover::after {
-            width: 100%;
-        }
 
-        /* Wrapper avec padding ajusté */
+
+        /* WRAPPER */
         .wrapper {
             max-width: 1100px;
             margin: 0 auto;
             padding: 120px 16px 80px;
         }
 
-        /* PHOTO PROFIL */
+        /* PHOTO */
         .photo-container {
-            width: 130px;
-            height: 130px;
+            width: 130px; height: 130px;
             border-radius: 50%;
             overflow: hidden;
             border: 3px solid #1f2937;
@@ -98,8 +84,7 @@
         }
 
         .photo-container img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
         }
 
@@ -110,22 +95,12 @@
             margin-bottom: 32px;
         }
 
-        .name {
-            font-size: 36px;
-            font-weight: 800;
-        }
-
-        .tagline {
-            font-size: 16px;
-            color: #9ca3af;
-            max-width: 650px;
-        }
+        .name { font-size: 36px; font-weight: 800; }
+        .tagline { font-size: 16px; color: #9ca3af; max-width: 650px; }
 
         .pill-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
+            display: flex; flex-wrap: wrap;
+            gap: 8px; margin-top: 10px;
         }
 
         .pill {
@@ -137,9 +112,28 @@
             border: 1px solid #1f2937;
         }
 
-        section {
-            margin-top: 32px;
+
+        /* ⭐ BOUTON CV PREMIUM ⭐ */
+        .cv-button {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+        .cv-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99,102,241,0.6);
+        }
+
+
+        section { margin-top: 32px; }
 
         .card {
             background: radial-gradient(circle at top left, #111827 0, #020617 55%);
@@ -160,7 +154,7 @@
             border-radius: 22px;
             padding: 20px;
             border: 1px solid #111827;
-            transition: transform 0.15s ease, border-color 0.15s ease;
+            transition: 0.15s ease;
         }
 
         .project-card:hover {
@@ -168,16 +162,8 @@
             border-color: #6366f1;
         }
 
-        .project-icon {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
-
-        .project-title {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+        .project-icon { font-size: 30px; margin-bottom: 8px; }
+        .project-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
 
         .project-link {
             display: inline-block;
@@ -187,10 +173,6 @@
             border-radius: 999px;
             background: #111827;
             border: 1px solid #1f2937;
-        }
-
-        .project-card:hover .project-link {
-            border-color: #6366f1;
         }
 
         .contact-box {
@@ -206,15 +188,17 @@
             color: #6b7280;
             text-align: center;
         }
+
     </style>
 </head>
+
+
 
 <body>
 
     <!-- ⭐ NAVBAR PREMIUM ⭐ -->
     <nav class="navbar">
         <div class="nav-logo">INESS IRBOUH</div>
-
         <div class="nav-links">
             <a href="#accueil" class="nav-item">Accueil</a>
             <a href="#projets" class="nav-item">Projets</a>
@@ -223,10 +207,12 @@
         </div>
     </nav>
 
-    <!-- CONTENU -->
+
+
+    <!-- ⭐ CONTENU -->
     <div class="wrapper" id="accueil">
 
-        <!-- HEADER -->
+        <!-- ⭐ HEADER -->
         <header>
             <div class="photo-container">
                 <img src="photo_profil.jpg" alt="Photo de profil">
@@ -234,9 +220,12 @@
 
             <div>
                 <div class="name">INESS IRBOUH</div>
+
                 <p class="tagline">
-                    Étudiante en Master 1 <strong>Data Science for Social Sciences</strong> — Data Analyst & Machine Learning Enthusiast.
+                    Étudiante en Master 1 <strong>Data Science for Social Sciences</strong> —
+                    Data Analyst & Machine Learning Enthusiast.
                 </p>
+
                 <div class="pill-row">
                     <span class="pill">R</span>
                     <span class="pill">Python</span>
@@ -245,29 +234,38 @@
                     <span class="pill">Statistiques</span>
                     <span class="pill">Data Visualisation</span>
                 </div>
+
+                <!-- ⭐⭐ Bouton CV ici ⭐⭐ -->
+                <a class="cv-button" href="CV_Iness_Irbouh.pdf" target="_blank">📄 Télécharger mon CV</a>
             </div>
         </header>
 
-        <!-- APROPOS -->
+
+
+        <!-- ⭐ À PROPOS -->
         <section id="apropos">
             <h2>À propos de moi</h2>
             <div class="card">
                 <p>
-                    Passionnée par la data, j’aime transformer les informations brutes en analyses claires et utiles.
+                    Passionnée par la data, j’aime transformer les informations brutes en analyses claires,
+                    utiles et pertinentes pour comprendre des phénomènes concrets.
                 </p>
                 <ul>
-                    <li>Nettoyage et préparation des données</li>
-                    <li>Méthodes statistiques, ACP, clustering</li>
-                    <li>Machine Learning et modélisation</li>
-                    <li>Visualisations professionnelles</li>
-                    <li>Pédagogie et vulgarisation des résultats</li>
+                    <li>Préparation & nettoyage des données</li>
+                    <li>Analyses statistiques, ACP, clustering</li>
+                    <li>Modèles Machine Learning (kNN, Logistique, Bayes…)</li>
+                    <li>Visualisations professionnelles (ggplot2, Python)</li>
+                    <li>Rigueur, pédagogie et communication scientifique</li>
                 </ul>
             </div>
         </section>
 
-        <!-- PROJETS -->
+
+
+        <!-- ⭐ PROJETS -->
         <section id="projets">
             <h2>Projets sélectionnés</h2>
+
             <div class="projects-grid">
 
                 <article class="project-card">
@@ -297,19 +295,33 @@
             </div>
         </section>
 
-        <!-- CONTACT -->
+
+
+        <!-- ⭐ CONTACT -->
         <section id="contact">
             <h2>Contact</h2>
+
             <div class="card contact-box">
-                <div>📧 <strong>Email :</strong> <a href="mailto:iness.irbouh@gmail.com">iness.irbouh@gmail.com</a></div>
-                <div>💼 <strong>LinkedIn :</strong> <a href="https://www.linkedin.com/in/iness-irbouh-4465b2253/" target="_blank">Profil LinkedIn</a></div>
-                <div>🐙 <strong>GitHub :</strong> <a href="https://iness-irbouh.github.io/" target="_blank">Portfolio GitHub</a></div>
+                <div>📧 <strong>Email :</strong> 
+                    <a href="mailto:iness.irbouh@gmail.com">iness.irbouh@gmail.com</a>
+                </div>
+
+                <div>💼 <strong>LinkedIn :</strong> 
+                    <a href="https://www.linkedin.com/in/iness-irbouh-4465b2253/" target="_blank">Profil LinkedIn</a>
+                </div>
+
+                <div>🐙 <strong>GitHub :</strong> 
+                    <a href="https://iness-irbouh.github.io/" target="_blank">Portfolio GitHub</a>
+                </div>
             </div>
         </section>
+
+
 
         <footer>
             © 2025 – Portfolio de Iness Irbouh — Tous droits réservés
         </footer>
+
     </div>
 
 </body>
