@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projet 4 – Analyse des Heures Complémentaires (Python)</title>
+
+<style>
+body {
+    margin: 0;
+    background: #050814;
+    color: #e5e7eb;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 32px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    font-size: 32px;
+    color: white;
+    margin-bottom: 12px;
+}
+
+h2 {
+    font-size: 22px;
+    color: #93c5fd;
+    margin-top: 30px;
+}
+
+.card {
+    background: #0b0f1d;
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid #1f2937;
+    margin-top: 14px;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+strong {
+    color: #f3f4f6;
+}
+
+a {
+    color: #93c5fd;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #1f2937;
+    background: #111827;
+    color: white;
+    text-decoration: none;
+}
+.button:hover {
+    border-color: #6366f1;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Projet 4 — Analyse des Heures Complémentaires des Enseignants (Python)</h1>
+
+    <div class="card">
+        <p>
+            Ce projet analyse les <strong>heures complémentaires (HETD)</strong> réalisées par les enseignants
+            d’une UFR.  
+            Deux versions ont été développées : une version simple en Python pur et une version avancée
+            utilisant la librairie <strong>pandas</strong>.
+        </p>
+    </div>
+
+    <h2>1. Version simple (Python pur)</h2>
+    <div class="card">
+        <p>
+            Dans cette première version, aucun module externe n’a été utilisé.  
+            Le fichier CSV a été traité uniquement avec les outils natifs de Python.
+        </p>
+
+        <p>Étapes réalisées :</p>
+        <ul>
+            <li>lecture manuelle du fichier CSV avec <strong>csv.DictReader</strong> ;</li>
+            <li>nettoyage et conversion des données ;</li>
+            <li>classement des enseignants par département et statut ;</li>
+            <li>calcul des statistiques : minimum, maximum, moyenne ;</li>
+            <li>création automatique d’un fichier CSV pour chaque département ;</li>
+            <li>export d’un fichier à part pour les enseignants sans département.</li>
+        </ul>
+
+        <p>
+            Cette version démontre ma capacité à :
+        </p>
+        <ul>
+            <li>manipuler des fichiers CSV manuellement ;</li>
+            <li>gérer des structures de données Python (listes, dictionnaires) ;</li>
+            <li>écrire des fichiers de sortie ;</li>
+            <li>automatiser des tâches sans aucune dépendance externe.</li>
+        </ul>
+
+        <p>
+            🔗 <a href="code/TD_DATAE.py">Voir la version simple en Python</a>
+        </p>
+    </div>
+
+    <h2>2. Version avancée (avec Pandas)</h2>
+    <div class="card">
+        <p>
+            La deuxième version utilise <strong>pandas</strong> pour rendre l’analyse plus rapide, plus complète
+            et surtout plus professionnelle.
+        </p>
+
+        <p>Étapes réalisées :</p>
+        <ul>
+            <li>importation et nettoyage du fichier <strong>dataE.csv</strong> ;</li>
+            <li>harmonisation des colonnes (statut, département, heures) ;</li>
+            <li>regroupement des enseignants par département et par statut ;</li>
+            <li>calcul automatique des statistiques descriptives ;</li>
+            <li>génération d’un fichier Excel complet regroupant tous les départements ;</li>
+            <li>création automatique d’un <strong>graphique en barres</strong> pour visualiser la moyenne des heures ;</li>
+            <li>création d’une feuille Excel par département, contenant données + graphique ;</li>
+            <li>ouverture automatique du fichier Excel final.</li>
+        </ul>
+
+        <p>
+            Cette version apporte :
+        </p>
+        <ul>
+            <li>un traitement plus rapide et robuste ;</li>
+            <li>des fichiers Excel professionnels ;</li>
+            <li>des visualisations automatiques ;</li>
+            <li>une automatisation complète du pipeline d’analyse.</li>
+        </ul>
+
+        <p>
+            🔗 <a href="code/PandaVersion.py">Voir la version avancée (pandas)</a>
+        </p>
+    </div>
+
+    <a href="index.html" class="button">⬅ Retour à l'accueil</a>
+
+</div>
+</body>
+</html>
