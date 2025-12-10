@@ -23,44 +23,64 @@
             text-decoration: none;
         }
 
-        /* NAVBAR */
-        nav {
+        /* ⭐⭐ NAVBAR PREMIUM ⭐⭐ */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            backdrop-filter: blur(10px);
-            background: rgba(5, 8, 20, 0.6);
-            border-bottom: 1px solid #1f2937;
-            padding: 12px 30px;
-            z-index: 200;
+            padding: 14px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 200;
+            backdrop-filter: blur(12px);
+            background: rgba(5, 8, 20, 0.55);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.22);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
         }
 
-        nav .nav-left {
-            font-weight: 700;
-            font-size: 17px;
-            color: #93c5fd;
-            letter-spacing: 0.03em;
-        }
-
-        nav .nav-links {
-            display: flex;
-            gap: 22px;
-        }
-
-        nav .nav-links a {
-            font-size: 14px;
-            opacity: 0.85;
-        }
-
-        nav .nav-links a:hover {
-            opacity: 1;
+        .nav-logo {
+            font-weight: 800;
+            font-size: 19px;
+            letter-spacing: 0.05em;
             color: #a5b4fc;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-item {
+            position: relative;
+            font-size: 15px;
+            padding: 4px 2px;
+            color: #e5e7eb;
+            transition: 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: #c7d2fe;
+        }
+
+        .nav-item::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        /* Wrapper avec padding ajusté */
         .wrapper {
             max-width: 1100px;
             margin: 0 auto;
@@ -83,7 +103,6 @@
             object-fit: cover;
         }
 
-        /* HEADER */
         header {
             display: flex;
             align-items: center;
@@ -118,14 +137,8 @@
             border: 1px solid #1f2937;
         }
 
-        /* SECTIONS */
         section {
             margin-top: 32px;
-        }
-
-        section h2 {
-            font-size: 20px;
-            margin-bottom: 12px;
         }
 
         .card {
@@ -180,7 +193,6 @@
             border-color: #6366f1;
         }
 
-        /* CONTACT */
         .contact-box {
             display: flex;
             flex-direction: column;
@@ -199,14 +211,15 @@
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav>
-        <div class="nav-left">INESS IRBOUH</div>
+    <!-- ⭐ NAVBAR PREMIUM ⭐ -->
+    <nav class="navbar">
+        <div class="nav-logo">INESS IRBOUH</div>
+
         <div class="nav-links">
-            <a href="#accueil">Accueil</a>
-            <a href="#projets">Projets</a>
-            <a href="#apropos">À propos</a>
-            <a href="#contact">Contact</a>
+            <a href="#accueil" class="nav-item">Accueil</a>
+            <a href="#projets" class="nav-item">Projets</a>
+            <a href="#apropos" class="nav-item">À propos</a>
+            <a href="#contact" class="nav-item">Contact</a>
         </div>
     </nav>
 
@@ -240,18 +253,14 @@
             <h2>À propos de moi</h2>
             <div class="card">
                 <p>
-                    Passionnée par la data, j’aime transformer les informations brutes en analyses claires et utiles
-                    pour comprendre des phénomènes réels : sport, finance, éducation, RH…
-                </p>
-                <p>
-                    Mes projets mettent en avant :
+                    Passionnée par la data, j’aime transformer les informations brutes en analyses claires et utiles.
                 </p>
                 <ul>
-                    <li>la rigueur dans le nettoyage et la préparation des données,</li>
-                    <li>la maîtrise des méthodes statistiques (tests, régression, ACP, clustering),</li>
-                    <li>la construction de modèles Machine Learning,</li>
-                    <li>des visualisations et présentations professionnelles,</li>
-                    <li>et la capacité à expliquer les résultats de manière pédagogique.</li>
+                    <li>Nettoyage et préparation des données</li>
+                    <li>Méthodes statistiques, ACP, clustering</li>
+                    <li>Machine Learning et modélisation</li>
+                    <li>Visualisations professionnelles</li>
+                    <li>Pédagogie et vulgarisation des résultats</li>
                 </ul>
             </div>
         </section>
@@ -261,28 +270,24 @@
             <h2>Projets sélectionnés</h2>
             <div class="projects-grid">
 
-                <!-- Projet 1 -->
                 <article class="project-card">
                     <div class="project-icon">⚽</div>
                     <div class="project-title">Analyse des Coupes du Monde</div>
                     <a class="project-link" href="project1.html">Voir le projet</a>
                 </article>
 
-                <!-- Projet 2 -->
                 <article class="project-card">
                     <div class="project-icon">📊</div>
                     <div class="project-title">Prédiction du Churn Client</div>
                     <a class="project-link" href="project2.html">Voir le projet</a>
                 </article>
 
-                <!-- Projet 3 -->
                 <article class="project-card">
                     <div class="project-icon">📉</div>
                     <div class="project-title">AFC – Tâches ménagères</div>
                     <a class="project-link" href="project3.html">Voir le projet</a>
                 </article>
 
-                <!-- Projet 4 -->
                 <article class="project-card">
                     <div class="project-icon">🐍</div>
                     <div class="project-title">Analyse des heures complémentaires</div>
