@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projet 3 – Analyse des Tâches Ménagères (AFC)</title>
+
+<style>
+body {
+    margin: 0;
+    background: #050814;
+    color: #e5e7eb;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 32px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    font-size: 32px;
+    color: white;
+    margin-bottom: 12px;
+}
+
+h2 {
+    font-size: 22px;
+    color: #93c5fd;
+    margin-top: 30px;
+}
+
+.card {
+    background: #0b0f1d;
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid #1f2937;
+    margin-top: 14px;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+strong {
+    color: #f3f4f6;
+}
+
+a {
+    color: #93c5fd;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #1f2937;
+    background: #111827;
+    color: white;
+    text-decoration: none;
+}
+.button:hover {
+    border-color: #6366f1;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Projet 3 — Analyse des Tâches Ménagères (AFC)</h1>
+
+    <div class="card">
+        <p>
+            Ce projet étudie la répartition des tâches ménagères au sein d’un foyer à l’aide d’une
+            <strong>Analyse des Correspondances (AFC)</strong>.  
+            Il mobilise : tableaux de contingence, test du Chi², analyses factorielles, visualisations
+            et interprétation détaillée des axes.
+        </p>
+    </div>
+
+    <h2>Objectif de l’analyse</h2>
+    <div class="card">
+        <p>
+            L’objectif est d’identifier comment les tâches ménagères sont réparties entre :
+        </p>
+        <ul>
+            <li>la femme,</li>
+            <li>le mari,</li>
+            <li>le partage alterné,</li>
+            <li>le couple (jointement).</li>
+        </ul>
+        <p>
+            L’AFC permet de visualiser clairement les associations entre tâches et personnes, et
+            de comprendre les logiques de répartition au sein du foyer.
+        </p>
+        <p>Compétences mises en œuvre :</p>
+        <ul>
+            <li>construction et analyse d’un tableau de contingence,</li>
+            <li>test du Chi²,</li>
+            <li>AFC complète (profils, inertie, contributions),</li>
+            <li>visualisations (biplots, graphiques),</li>
+            <li>interprétation et synthèse des résultats.</li>
+        </ul>
+    </div>
+
+    <h2>1. Données utilisées</h2>
+    <div class="card">
+        <p>Données : <strong>housetasks</strong></p>
+        <p>Contenu :</p>
+        <ul>
+            <li>13 tâches ménagères ;</li>
+            <li>4 personnes : Wife, Husband, Alternating, Jointly.</li>
+        </ul>
+        <p>Objectif : analyser les réelles habitudes de répartition des rôles.</p>
+    </div>
+
+    <h2>2. Test d’indépendance (Chi²)</h2>
+    <div class="card">
+        <p>
+            Le test du Chi² montre que la répartition des tâches n’est <strong>pas</strong> due au hasard :
+            il existe une forte dépendance entre les tâches et la personne qui les réalise.
+        </p>
+        <p>Exemples visibles :</p>
+        <ul>
+            <li>Tâches féminines : lessive, repas, repassage.</li>
+            <li>Tâches masculines : réparations, conduite.</li>
+            <li>Tâches partagées : vaisselle, courses, vacances.</li>
+        </ul>
+    </div>
+
+    <h2>3. Résultats de l’AFC</h2>
+    <div class="card">
+        <p>L’AFC permet de visualiser les associations fortes.</p>
+
+        <h3 style="color:#a5b4fc; margin-top:10px;">Axe 1</h3>
+        <ul>
+            <li>Opposition tâches majoritairement féminines</li>
+            <li>vs tâches majoritairement masculines</li>
+        </ul>
+
+        <h3 style="color:#a5b4fc; margin-top:10px;">Axe 2</h3>
+        <ul>
+            <li>Opposition tâches individuelles</li>
+            <li>vs tâches réalisées conjointement</li>
+        </ul>
+
+        <p>
+            Les deux axes expliquent près de <strong>90 % de l’inertie</strong>,
+            assurant une excellente qualité d’interprétation.
+        </p>
+    </div>
+
+    <h2>4. Visualisations produites</h2>
+    <div class="card">
+        <p>Graphiques générés :</p>
+        <ul>
+            <li>profils lignes et colonnes ;</li>
+            <li>biplot AFC ;</li>
+            <li>graphique des contributions ;</li>
+            <li>représentation jointe tâches/personnes.</li>
+        </ul>
+        <p>Ces graphiques facilitent la lecture des regroupements et des oppositions.</p>
+    </div>
+
+    <h2>5. Code source du projet</h2>
+    <div class="card">
+        <p>
+            ➤ <a href="code/code.housetasks.Rmd">Voir le code R (Rmd)</a>
+        </p>
+    </div>
+
+    <h2>6. Rapport PDF</h2>
+    <div class="card">
+        <p>
+            ➤ <a href="code/housetasks.pdf">Voir le rapport PDF</a>
+        </p>
+    </div>
+
+    <a href="index.html" class="button">⬅ Retour à l'accueil</a>
+
+</div>
+</body>
+</html>
